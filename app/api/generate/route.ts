@@ -3,6 +3,8 @@ import { v4 as uuidv4 } from 'uuid';
 import { generatePromotionPlan } from '@/lib/ai';
 import { createProduct, savePromotionPlan, createTask } from '@/lib/db';
 
+export const dynamic = 'force-dynamic';
+
 export async function POST(request: Request) {
   try {
     const body = await request.json();
@@ -40,17 +42,26 @@ export async function POST(request: Request) {
       status: 'not_started',
     });
 
-    // Generate promotion plan
-    const plan = await generatePromotionPlan({
-      productName: body.name,
-      category: body.category,
-      price,
-      cost,
-      targetUser: body.targetUser || '',
-      sellingPoints,
-      launchDate: body.launchDate || new Date().toISOString().split('T')[0],
-      region: body.region || '全国',
-    });
+    // Generate promotion plan with explicit error handling
+    let plan;
+    try {
+      plan = await generatePromotionPlan({
+        productName: body.name,
+        category: body.category,
+        price,
+        cost,
+        targetUser: body.targetUser || '',
+        sellingPoints,
+        launchDate: body.launchDate || new Date().toISOString().split('T')[0],
+        region: body.region || '全国',
+      });
+    } catch (aiError: any) {
+      console.error('AI generation failed:', aiError);
+      return NextResponse.json(
+        { error: 'AI generation failed: ' + aiError.message },
+        { status: 500 }
+      );
+    }
 
     // Save promotion plan
     const planId = uuidv4();
@@ -118,10 +129,10 @@ export async function POST(request: Request) {
       planId,
       plan,
     });
-  } catch (error) {
+  } catch (error: any) {
     console.error('Generate error:', error);
     return NextResponse.json(
-      { error: 'Failed to generate promotion plan' },
+      { error: 'Failed to generate promotion plan: ' + error.message },
       { status: 500 }
     );
   }
