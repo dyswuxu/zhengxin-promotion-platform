@@ -1,5 +1,5 @@
 // AI generation module for promotion plans
-// Uses MiniMax API via mmx CLI
+// Uses MiniMax API directly
 
 interface GenerateInput {
   productName: string;
@@ -39,26 +39,36 @@ interface GenerateOutput {
   };
 }
 
-// Call MiniMax AI via mmx CLI
+// Call MiniMax AI API directly
 async function callMiniMaxAI(prompt: string): Promise<string> {
-  const { execSync } = require('child_process');
-
-  try {
-    const result = execSync(
-      `mmx text chat --message "user:${prompt}" --output json --quiet --non-interactive`,
-      {
-        encoding: 'utf-8',
-        maxBuffer: 10 * 1024 * 1024, // 10MB buffer
-        timeout: 60000, // 60 second timeout
-      }
-    );
-
-    const response = JSON.parse(result);
-    return response.content || response.message || result;
-  } catch (error: any) {
-    console.error('MiniMax API call failed:', error.message);
-    throw new Error(`AI API调用失败: ${error.message}`);
+  const apiKey = process.env.MINIMAX_API_KEY;
+  if (!apiKey) {
+    throw new Error('MINIMAX_API_KEY environment variable is not set');
   }
+
+  const response = await fetch('https://api.minimax.io/v1/text/chatcompletion_pro', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${apiKey}`,
+    },
+    body: JSON.stringify({
+      model: 'MiniMax-M2.7',
+      messages: [
+        { role: 'user', content: prompt }
+      ],
+      stream: false,
+      max_tokens: 4096,
+    }),
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(`MiniMax API error: ${response.status} ${errorText}`);
+  }
+
+  const data = await response.json() as any;
+  return data.choices?.[0]?.message?.content || data.choices?.[0]?.text || '';
 }
 
 // Parse AI response to extract structured JSON
