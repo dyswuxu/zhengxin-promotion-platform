@@ -1,19 +1,17 @@
 import Database from 'better-sqlite3';
 import path from 'path';
 
-// Use /tmp on Vercel (ephemeral filesystem), ./data locally
-const isVercel = process.env.VERCEL === 'true';
-const dataDir = isVercel ? '/tmp' : path.join(process.cwd(), 'data');
-const dbPath = path.join(dataDir, 'platform.db');
+// Always use /tmp for database (writable on both Vercel and local)
+const dbPath = path.join('/tmp', 'platform.db');
 
 let db: Database.Database | null = null;
 
 export function getDb(): Database.Database {
   if (!db) {
-    // Ensure data directory exists
+    // Ensure /tmp directory exists
     const fs = require('fs');
-    if (!fs.existsSync(dataDir)) {
-      fs.mkdirSync(dataDir, { recursive: true });
+    if (!fs.existsSync('/tmp')) {
+      fs.mkdirSync('/tmp', { recursive: true });
     }
 
     db = new Database(dbPath);
