@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server';
 import { getTasks } from '@/lib/db';
 import { exportTasksToExcel } from '@/lib/import-export';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
