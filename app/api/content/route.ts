@@ -32,21 +32,21 @@ async function callMiniMax(endpoint: string, body: any): Promise<any> {
 async function generatePoster(productName: string, sellingPoints: string[], price: number): Promise<string> {
   const prompt = `正新鸡排新品海报，风格：美食摄影，深橙色背景，产品名称"${productName}"大字居中，副标题"新品上市 限时尝鲜"，底部"正新鸡排 全国门店同步发售"，简洁专业风格，适合打印喷绘`;
   
-  const data = await callMiniMax('/images/generations', {
+  const data = await callMiniMax('/image_generation', {
     model: 'image-01',
     prompt,
     image_size: '1024x1024',
     num_images: 1,
   });
   
-  return data.images?.[0]?.url || '';
+  return data.images?.[0]?.url || data.url || '';
 }
 
 // 生成种草视频
 async function generateVideo(productName: string, sellingPoints: string[]): Promise<{ taskId: string }> {
   const prompt = `15秒正新鸡排新品种草视频脚本：开场产品特写，中段展示美味口感，结尾LOGO定格。风格：食欲感强、明快节奏、暖色调。产品：${productName}，核心卖点：${sellingPoints[0] || '酥脆美味'}`;
   
-  const data = await callMiniMax('/video/generation', {
+  const data = await callMiniMax('/video_generation', {
     model: 'MiniMax-Hailuo-2.3-Fast',
     prompt,
   });
@@ -56,7 +56,7 @@ async function generateVideo(productName: string, sellingPoints: string[]): Prom
 
 // 查询视频状态
 async function getVideoStatus(taskId: string): Promise<{ status: string; url?: string }> {
-  const response = await fetch(`https://api.minimax.io/v1/video/status?task_id=${taskId}`, {
+  const response = await fetch(`https://api.minimax.io/v1/query/video_generation?task_id=${taskId}`, {
     headers: {
       'Authorization': `Bearer ${API_KEY}`,
     },
@@ -72,9 +72,10 @@ async function getVideoStatus(taskId: string): Promise<{ status: string; url?: s
 async function generateAudio(productName: string, sellingPoints: string[], price: number): Promise<string> {
   const text = `欢迎光临正新鸡排！本店新品「${productName}」震撼上市！${sellingPoints[0] || '酥脆多汁'}，一口沦陷！新品尝鲜价仅需${price}元，限时优惠，欢迎品尝！`;
   
-  const data = await callMiniMax('/speech/synthesis', {
-    model: 'speech-2.8-hd',
+  const data = await callMiniMax('/t2a_v2', {
+    model: 'speech-02',
     text,
+    stream: false,
     voice_setting: {
       voice_id: 'Chinese_Yunvocal_4',
     },
@@ -84,7 +85,7 @@ async function generateAudio(productName: string, sellingPoints: string[], price
     },
   });
   
-  return data.data?.url || data.url || '';
+  return data.data?.url || data.audio_url || data.url || '';
 }
 
 // 生成文案
