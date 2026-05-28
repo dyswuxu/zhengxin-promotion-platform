@@ -247,8 +247,9 @@ function ContentVisualizer({ type, content, onVideoStatusCheck }: { type: string
       );
     }
   }
-  
-  // Fallback to mock data
+
+  // Fallback to mock data when no content generated yet
+  if (type === 'poster') {
     return (
       <div className="bg-gradient-to-br from-battle-orange/30 to-battle-orange/10 border border-battle-orange/30 rounded-xl p-6 h-full flex flex-col">
         <div className="flex-1 bg-dark-bg rounded-lg flex items-center justify-center relative overflow-hidden">
@@ -325,10 +326,6 @@ function ContentVisualizer({ type, content, onVideoStatusCheck }: { type: string
               </span>
             </div>
             <p className="text-sm text-text-primary">{post.content}</p>
-            <div className="mt-3 flex items-center gap-2 text-xs text-text-secondary">
-              <span className="flex items-center gap-1"><Image size={12} /> 图片</span>
-              <span className="flex items-center gap-1"><MessageSquare size={12} /> 互动</span>
-            </div>
           </div>
         ))}
       </div>

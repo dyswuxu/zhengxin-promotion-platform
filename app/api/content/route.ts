@@ -104,11 +104,11 @@ async function generateText(productName: string, sellingPoints: string[], price:
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${API_KEY}`,
     },
-    body: {
+    body: JSON.stringify({
       model: 'MiniMax-M2.7',
       messages: [{ role: 'user', content: prompt }],
       max_tokens: 512,
-    },
+    }),
   });
   const data = await response.json();
   const content = data.choices?.[0]?.message?.content || '';
