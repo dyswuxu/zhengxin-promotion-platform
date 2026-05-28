@@ -137,8 +137,8 @@ function PackageCard({ pkg, onClick }: { pkg: typeof mockPackages[0]; onClick: (
 }
 
 function ContentVisualizer({ type, content, onVideoStatusCheck }: { type: string; content?: any; onVideoStatusCheck?: () => void }) {
-  // 如果有真实内容，使用真实内容
-  if (content) {
+  // 如果有真实内容且没有报错，使用真实内容
+  if (content && !content.error) {
     if (type === 'poster') {
       return (
         <div className="bg-gradient-to-br from-battle-orange/30 to-battle-orange/10 border border-battle-orange/30 rounded-xl p-6 h-full flex flex-col">
@@ -362,45 +362,61 @@ export default function BattleCreatorWizard() {
   const handleGenerate = async () => {
     setIsGenerating(true);
     setIsGeneratingContent(true);
+    
+    const sellingPointsArray = formData.sellingPoints.split('\n').filter((s: string) => s.trim());
+    
+    // 逐个请求，结果存入临时对象
+    const tempContent: any = {};
+    
     try {
-      // 真实调用AI生成内容
-      const sellingPointsArray = formData.sellingPoints.split('\n').filter((s: string) => s.trim());
-      const [posterRes, videoRes, audioRes, textRes] = await Promise.all([
-        fetch('/api/content', {
+      // 1. 海报
+      try {
+        const r = await fetch('/api/content', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ type: 'poster', productName: formData.name, sellingPoints: sellingPointsArray, price: formData.price }),
-        }),
-        fetch('/api/content', {
+        });
+        tempContent.poster = await r.json();
+      } catch(e) { tempContent.poster = { error: '海报请求失败' }; }
+      
+      // 2. 视频
+      try {
+        const r = await fetch('/api/content', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ type: 'video', productName: formData.name, sellingPoints: sellingPointsArray, price: formData.price }),
-        }),
-        fetch('/api/content', {
+        });
+        tempContent.video = await r.json();
+      } catch(e) { tempContent.video = { error: '视频请求失败' }; }
+      
+      // 3. 音频
+      try {
+        const r = await fetch('/api/content', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ type: 'audio', productName: formData.name, sellingPoints: sellingPointsArray, price: formData.price }),
-        }),
-        fetch('/api/content', {
+        });
+        tempContent.audio = await r.json();
+      } catch(e) { tempContent.audio = { error: '音频请求失败' }; }
+      
+      // 4. 文案
+      try {
+        const r = await fetch('/api/content', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ type: 'text', productName: formData.name, sellingPoints: sellingPointsArray, price: formData.price }),
-        }),
-      ]);
+        });
+        tempContent.text = await r.json();
+      } catch(e) { tempContent.text = { error: '文案请求失败', posts: [] }; }
       
-      const [poster, video, audio, text] = await Promise.all([posterRes.json(), videoRes.json(), audioRes.json(), textRes.json()]);
-      
-      setGeneratedContent({ poster, video, audio, text });
-      setIsGenerating(false);
-      setIsGeneratingContent(false);
-      setCurrentStep(2);
+      setGeneratedContent(tempContent);
     } catch (e) {
       console.error('内容生成失败:', e);
-      setIsGenerating(false);
-      setIsGeneratingContent(false);
-      // 即使失败也允许进入下一步查看
-      setCurrentStep(2);
     }
+    
+    setIsGenerating(false);
+    setIsGeneratingContent(false);
+    setCurrentStep(2);
   };
 
   const handleLaunch = () => {
