@@ -70,18 +70,18 @@ export default function ReviewPage() {
       {/* Header */}
       <div>
         <h1 className="text-2xl font-bold text-text">复盘中心</h1>
-        <p className="text-muted mt-1">沉淀成功与失败经验，优化未来推广策略</p>
+        <p className="text-text-secondary mt-1">沉淀成功与失败经验，优化未来推广策略</p>
       </div>
 
       {/* Stats */}
       <div className="grid grid-cols-3 gap-6">
-        <div className="bg-white rounded-xl border border-border p-6">
+        <div className="bg-dark-card rounded-xl border border-dark-border p-6">
           <div className="flex items-center gap-4">
             <div className="w-12 h-12 bg-success/10 rounded-xl flex items-center justify-center">
               <CheckCircle2 size={24} className="text-success" />
             </div>
             <div>
-              <p className="text-sm text-muted">成功案例</p>
+              <p className="text-sm text-text-secondary">成功案例</p>
               <p className="text-2xl font-bold text-text">
                 {cases.filter(c => c.type === 'success').length}
               </p>
@@ -89,13 +89,13 @@ export default function ReviewPage() {
           </div>
         </div>
 
-        <div className="bg-white rounded-xl border border-border p-6">
+        <div className="bg-dark-card rounded-xl border border-dark-border p-6">
           <div className="flex items-center gap-4">
             <div className="w-12 h-12 bg-error/10 rounded-xl flex items-center justify-center">
               <XCircle size={24} className="text-error" />
             </div>
             <div>
-              <p className="text-sm text-muted">失败案例</p>
+              <p className="text-sm text-text-secondary">失败案例</p>
               <p className="text-2xl font-bold text-text">
                 {cases.filter(c => c.type === 'failure').length}
               </p>
@@ -103,13 +103,13 @@ export default function ReviewPage() {
           </div>
         </div>
 
-        <div className="bg-white rounded-xl border border-border p-6">
+        <div className="bg-dark-card rounded-xl border border-dark-border p-6">
           <div className="flex items-center gap-4">
             <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center">
-              <TrendingUp size={24} className="text-primary" />
+              <TrendingUp size={24} className="bg-battle-blue/20 text-battle-blue" />
             </div>
             <div>
-              <p className="text-sm text-muted">平均评分</p>
+              <p className="text-sm text-text-secondary">平均评分</p>
               <p className="text-2xl font-bold text-text">
                 {cases.length > 0
                   ? Math.round(cases.reduce((sum, c) => sum + c.score, 0) / cases.length)
@@ -121,7 +121,7 @@ export default function ReviewPage() {
       </div>
 
       {/* AI insights */}
-      <div className="bg-gradient-to-r from-accent/10 to-primary/10 rounded-xl border border-border p-6">
+      <div className="bg-gradient-to-r from-accent/10 to-primary/10 rounded-xl border border-dark-border p-6">
         <div className="flex items-center gap-3 mb-4">
           <div className="w-10 h-10 bg-accent/20 rounded-lg flex items-center justify-center">
             <Lightbulb size={20} className="text-accent" />
@@ -129,19 +129,19 @@ export default function ReviewPage() {
           <h2 className="font-semibold text-text">AI优化建议</h2>
         </div>
         <div className="space-y-3">
-          <div className="flex items-start gap-3 bg-white/60 rounded-lg p-4">
+          <div className="flex items-start gap-3 bg-dark-bg/50 rounded-lg p-4">
             <span className="text-accent">•</span>
             <p className="text-sm">
               <strong>预热期重要性：</strong>数据显示，有完整7天预热期的新品成功率比没有预热的高出47%。建议所有新品必须包含T-7的预热动作。
             </p>
           </div>
-          <div className="flex items-start gap-3 bg-white/60 rounded-lg p-4">
+          <div className="flex items-start gap-3 bg-dark-bg/50 rounded-lg p-4">
             <span className="text-accent">•</span>
             <p className="text-sm">
               <strong>定价策略：</strong>定价在15-25元区间的新品最受欢迎，毛利率应控制在55%-65%之间以保证竞争力。
             </p>
           </div>
-          <div className="flex items-start gap-3 bg-white/60 rounded-lg p-4">
+          <div className="flex items-start gap-3 bg-dark-bg/50 rounded-lg p-4">
             <span className="text-accent">•</span>
             <p className="text-sm">
               <strong>执行标准化：</strong>门店执行合规率&gt;85%的新品，销量比低于85%的组别高出32%。建议加强门店培训和监督。
@@ -151,8 +151,8 @@ export default function ReviewPage() {
       </div>
 
       {/* Cases list */}
-      <div className="bg-white rounded-xl border border-border">
-        <div className="p-4 border-b border-border flex items-center justify-between">
+      <div className="bg-dark-card rounded-xl border border-dark-border">
+        <div className="p-4 border-b border-dark-border flex items-center justify-between">
           <h2 className="font-semibold text-text">案例库</h2>
           <div className="flex items-center gap-2">
             {(['all', 'success', 'failure'] as const).map(f => (
@@ -162,7 +162,7 @@ export default function ReviewPage() {
                 className={`px-3 py-1.5 text-xs rounded-lg transition-colors ${
                   filter === f
                     ? 'bg-primary text-white'
-                    : 'bg-gray-100 text-muted hover:bg-gray-200'
+                    : 'bg-dark-border text-text-secondary hover:bg-gray-200'
                 }`}
               >
                 {f === 'all' ? '全部' : f === 'success' ? '成功' : '失败'}
@@ -174,12 +174,12 @@ export default function ReviewPage() {
         <div className="divide-y divide-border">
           {loading ? (
             <div className="p-12 text-center">
-              <RefreshCw className="mx-auto text-muted animate-spin" size={32} />
+              <RefreshCw className="mx-auto text-text-secondary animate-spin" size={32} />
             </div>
           ) : filteredCases.length === 0 ? (
             <div className="p-12 text-center">
-              <Archive className="mx-auto text-muted mb-4" size={48} />
-              <p className="text-muted">暂无案例</p>
+              <Archive className="mx-auto text-text-secondary mb-4" size={48} />
+              <p className="text-text-secondary">暂无案例</p>
             </div>
           ) : (
             filteredCases.map(reviewCase => (
@@ -189,7 +189,7 @@ export default function ReviewPage() {
                     <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${
                       reviewCase.type === 'success'
                         ? 'bg-success/10 text-success'
-                        : 'bg-error/10 text-error'
+                        : 'bg-red-500/20 text-red-400'
                     }`}>
                       {reviewCase.type === 'success' ? (
                         <CheckCircle2 size={20} />
@@ -199,13 +199,13 @@ export default function ReviewPage() {
                     </div>
                     <div>
                       <h3 className="font-medium text-text">{reviewCase.productName}</h3>
-                      <p className="text-xs text-muted">评分 {reviewCase.score} · {reviewCase.createdAt}</p>
+                      <p className="text-xs text-text-secondary">评分 {reviewCase.score} · {reviewCase.createdAt}</p>
                     </div>
                   </div>
                   <span className={`text-xs px-2 py-1 rounded-full ${
                     reviewCase.type === 'success'
                       ? 'bg-success/10 text-success'
-                      : 'bg-error/10 text-error'
+                      : 'bg-red-500/20 text-red-400'
                   }`}>
                     {reviewCase.type === 'success' ? '成功' : '失败'}
                   </span>
@@ -213,7 +213,7 @@ export default function ReviewPage() {
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <p className="text-xs text-muted mb-2">关键因素</p>
+                    <p className="text-xs text-text-secondary mb-2">关键因素</p>
                     <ul className="space-y-1">
                       {reviewCase.keyFactors.map((factor, i) => (
                         <li key={i} className="text-sm text-text flex items-start gap-2">
@@ -224,7 +224,7 @@ export default function ReviewPage() {
                     </ul>
                   </div>
                   <div>
-                    <p className="text-xs text-muted mb-2">经验教训</p>
+                    <p className="text-xs text-text-secondary mb-2">经验教训</p>
                     <ul className="space-y-1">
                       {reviewCase.lessons.map((lesson, i) => (
                         <li key={i} className="text-sm text-text flex items-start gap-2">

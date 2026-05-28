@@ -62,12 +62,12 @@ export default function SettingsPage() {
       {/* Header */}
       <div>
         <h1 className="text-2xl font-bold text-text">系统设置</h1>
-        <p className="text-muted mt-1">管理平台配置和用户偏好</p>
+        <p className="text-text-secondary mt-1">管理平台配置和用户偏好</p>
       </div>
 
       <div className="flex items-start gap-6">
         {/* Sidebar */}
-        <div className="w-64 bg-white rounded-xl border border-border p-4">
+        <div className="w-64 bg-dark-card rounded-xl border border-dark-border p-4">
           <nav className="space-y-1">
             {settingsSections.map(s => {
               const Icon = s.icon;
@@ -78,7 +78,7 @@ export default function SettingsPage() {
                   className={`w-full flex items-center gap-3 px-4 py-3 text-sm rounded-lg transition-colors ${
                     activeSection === s.id
                       ? 'bg-accent/10 text-accent font-medium'
-                      : 'text-muted hover:bg-gray-50 hover:text-text'
+                      : 'text-text-secondary hover:bg-dark-bg hover:text-text'
                   }`}
                 >
                   <Icon size={18} />
@@ -90,15 +90,15 @@ export default function SettingsPage() {
         </div>
 
         {/* Content */}
-        <div className="flex-1 bg-white rounded-xl border border-border p-6">
+        <div className="flex-1 bg-dark-card rounded-xl border border-dark-border p-6">
           <h2 className="font-semibold text-text mb-6">{section.label}</h2>
 
           <div className="space-y-6">
             {section.fields.map(field => (
-              <div key={field.key} className="flex items-center justify-between py-3 border-b border-border last:border-0">
+              <div key={field.key} className="flex items-center justify-between py-3 border-b border-dark-border last:border-0">
                 <div>
                   <p className="font-medium text-text">{field.label}</p>
-                  <p className="text-xs text-muted mt-0.5">
+                  <p className="text-xs text-text-secondary mt-0.5">
                     {field.type === 'toggle' && (field.defaultValue ? '已开启' : '已关闭')}
                   </p>
                 </div>
@@ -107,13 +107,13 @@ export default function SettingsPage() {
                     <input
                       type="text"
                       defaultValue={field.defaultValue as string}
-                      className="w-full h-9 px-4 border border-border rounded-lg text-sm focus:outline-none focus:border-accent"
+                      className="w-full h-9 px-4 border border-dark-border rounded-lg text-sm focus:outline-none focus:border-accent"
                     />
                   )}
                   {field.type === 'select' && (
                     <select
                       defaultValue={field.defaultValue as string}
-                      className="w-full h-9 px-4 border border-border rounded-lg text-sm focus:outline-none focus:border-accent"
+                      className="w-full h-9 px-4 border border-dark-border rounded-lg text-sm focus:outline-none focus:border-accent"
                     >
                       {(field.options as string[]).map(opt => (
                         <option key={opt} value={opt}>{opt}</option>
@@ -123,7 +123,7 @@ export default function SettingsPage() {
                   {field.type === 'toggle' && (
                     <button
                       className={`w-12 h-6 rounded-full transition-colors relative ${
-                        field.defaultValue ? 'bg-accent' : 'bg-gray-200'
+                        field.defaultValue ? 'bg-accent' : 'bg-dark-hover'
                       }`}
                     >
                       <div className={`w-5 h-5 bg-white rounded-full shadow absolute top-0.5 transition-transform ${
@@ -136,7 +136,7 @@ export default function SettingsPage() {
             ))}
           </div>
 
-          <div className="mt-6 pt-6 border-t border-border flex items-center gap-4">
+          <div className="mt-6 pt-6 border-t border-dark-border flex items-center gap-4">
             <button
               onClick={handleSave}
               disabled={saving}
@@ -152,7 +152,7 @@ export default function SettingsPage() {
       </div>
 
       {/* Version info */}
-      <div className="text-center text-xs text-muted">
+      <div className="text-center text-xs text-text-secondary">
         <p>正新新品推广作战平台 v1.0.0 · MVP版本</p>
         <p className="mt-1">构建时间：2026-05-22</p>
       </div>

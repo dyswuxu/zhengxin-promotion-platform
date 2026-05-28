@@ -110,19 +110,19 @@ export default function StoresPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-text">门店管理</h1>
-          <p className="text-muted mt-1">管理所有门店信息，共 {stores.length} 家门店</p>
+          <p className="text-text-secondary mt-1">管理所有门店信息，共 {stores.length} 家门店</p>
         </div>
         <div className="flex items-center gap-3">
           <button
             onClick={() => router.push('/api/stores/template')}
-            className="flex items-center gap-2 px-4 py-2 border border-border rounded-lg hover:bg-gray-50 transition-colors text-sm"
+            className="flex items-center gap-2 px-4 py-2 border border-dark-border rounded-lg hover:bg-dark-bg transition-colors text-sm"
           >
             <Download size={18} />
             下载模板
           </button>
           <button
             onClick={() => window.location.href = '/api/stores/export'}
-            className="flex items-center gap-2 px-4 py-2 border border-border rounded-lg hover:bg-gray-50 transition-colors text-sm"
+            className="flex items-center gap-2 px-4 py-2 border border-dark-border rounded-lg hover:bg-dark-bg transition-colors text-sm"
           >
             <Download size={18} />
             导出门店
@@ -133,17 +133,17 @@ export default function StoresPage() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Import Section */}
         <div className="lg:col-span-1">
-          <div className="bg-white rounded-xl border border-border p-6 sticky top-6">
+          <div className="bg-dark-card rounded-xl border border-dark-border p-6 sticky top-6">
             <h2 className="font-semibold text-text mb-4 flex items-center gap-2">
               <Upload size={18} className="text-accent" />
               批量导入
             </h2>
 
             <form onSubmit={handleImport} className="space-y-4">
-              <div className="border-2 border-dashed border-border rounded-lg p-6 text-center hover:border-accent transition-colors">
-                <FileSpreadsheet className="mx-auto text-muted mb-3" size={36} />
-                <p className="text-sm text-muted mb-2">点击选择Excel文件</p>
-                <p className="text-xs text-muted">支持 .xlsx, .xls 格式</p>
+              <div className="border-2 border-dashed border-dark-border rounded-lg p-6 text-center hover:border-accent transition-colors">
+                <FileSpreadsheet className="mx-auto text-text-secondary mb-3" size={36} />
+                <p className="text-sm text-text-secondary mb-2">点击选择Excel文件</p>
+                <p className="text-xs text-text-secondary">支持 .xlsx, .xls 格式</p>
                 <input
                   type="file"
                   name="file"
@@ -173,7 +173,7 @@ export default function StoresPage() {
 
             {importStatus && (
               <div className={`mt-4 p-4 rounded-lg flex items-center gap-3 ${
-                importStatus === 'success' ? 'bg-success/10 text-success' : 'bg-error/10 text-error'
+                importStatus === 'success' ? 'bg-battle-green/20 text-battle-green' : 'bg-red-500/20 text-red-400'
               }`}>
                 {importStatus === 'success' ? <CheckCircle2 size={18} /> : <AlertCircle size={18} />}
                 <span className="text-sm">{message}</span>
@@ -181,9 +181,9 @@ export default function StoresPage() {
             )}
 
             {/* Import Tips */}
-            <div className="mt-6 p-4 bg-gray-50 rounded-lg">
+            <div className="mt-6 p-4 bg-dark-bg rounded-lg">
               <h3 className="text-sm font-medium text-text mb-2">导入说明</h3>
-              <ul className="text-xs text-muted space-y-1">
+              <ul className="text-xs text-text-secondary space-y-1">
                 <li>• 第一行为表头，请勿修改</li>
                 <li>• 必填字段：门店名称、所在区域</li>
                 <li>• 可选字段：城市、区县、地址、店长姓名、联系电话</li>
@@ -195,23 +195,23 @@ export default function StoresPage() {
 
         {/* Stores List */}
         <div className="lg:col-span-2">
-          <div className="bg-white rounded-xl border border-border p-6">
+          <div className="bg-dark-card rounded-xl border border-dark-border p-6">
             {/* Filters */}
             <div className="flex items-center gap-4 mb-6">
               <div className="relative flex-1">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted" size={16} />
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-text-secondary" size={16} />
                 <input
                   type="text"
                   placeholder="搜索门店名称、区县、店长..."
                   value={searchQuery}
                   onChange={e => setSearchQuery(e.target.value)}
-                  className="w-full h-10 pl-9 pr-4 border border-border rounded-lg text-sm focus:outline-none focus:border-accent"
+                  className="w-full h-10 pl-9 pr-4 border border-dark-border rounded-lg text-sm focus:outline-none focus:border-accent"
                 />
               </div>
               <select
                 value={regionFilter}
                 onChange={e => setRegionFilter(e.target.value)}
-                className="h-10 px-3 border border-border rounded-lg text-sm focus:outline-none focus:border-accent"
+                className="h-10 px-3 border border-dark-border rounded-lg text-sm focus:outline-none focus:border-accent"
               >
                 <option value="all">全部区域</option>
                 {regions.map(r => (
@@ -222,19 +222,19 @@ export default function StoresPage() {
 
             {/* Stats */}
             <div className="grid grid-cols-3 gap-4 mb-6">
-              <div className="bg-primary/5 rounded-lg p-4 text-center">
+              <div className="bg-battle-blue/10 rounded-lg p-4 text-center">
                 <p className="text-2xl font-bold text-primary">{stores.length}</p>
-                <p className="text-xs text-muted">门店总数</p>
+                <p className="text-xs text-text-secondary">门店总数</p>
               </div>
-              <div className="bg-success/5 rounded-lg p-4 text-center">
+              <div className="bg-battle-green/10 rounded-lg p-4 text-center">
                 <p className="text-2xl font-bold text-success">
                   {stores.filter(s => s.status === 'active').length}
                 </p>
-                <p className="text-xs text-muted">活跃门店</p>
+                <p className="text-xs text-text-secondary">活跃门店</p>
               </div>
-              <div className="bg-accent/5 rounded-lg p-4 text-center">
+              <div className="bg-battle-orange/10 rounded-lg p-4 text-center">
                 <p className="text-2xl font-bold text-accent">{regions.length}</p>
-                <p className="text-xs text-muted">覆盖区域</p>
+                <p className="text-xs text-text-secondary">覆盖区域</p>
               </div>
             </div>
 
@@ -242,7 +242,7 @@ export default function StoresPage() {
             {loading ? (
               <div className="space-y-3">
                 {[1, 2, 3, 4].map(i => (
-                  <div key={i} className="border border-border rounded-lg p-4">
+                  <div key={i} className="border border-dark-border rounded-lg p-4">
                     <div className="skeleton h-5 w-40 mb-2 rounded" />
                     <div className="skeleton h-4 w-full rounded" />
                   </div>
@@ -250,16 +250,16 @@ export default function StoresPage() {
               </div>
             ) : filteredStores.length === 0 ? (
               <div className="text-center py-12">
-                <Store className="mx-auto text-muted mb-4" size={48} />
-                <p className="text-muted">暂无门店数据</p>
-                <p className="text-xs text-muted mt-1">请先导入门店数据</p>
+                <Store className="mx-auto text-text-secondary mb-4" size={48} />
+                <p className="text-text-secondary">暂无门店数据</p>
+                <p className="text-xs text-text-secondary mt-1">请先导入门店数据</p>
               </div>
             ) : (
               <div className="space-y-3">
                 {filteredStores.map(store => (
                   <div
                     key={store.id}
-                    className="border border-border rounded-lg p-4 hover:border-accent/50 transition-colors"
+                    className="border border-dark-border rounded-lg p-4 hover:border-accent/50 transition-colors"
                   >
                     <div className="flex items-start justify-between">
                       <div className="flex items-start gap-3">
@@ -268,7 +268,7 @@ export default function StoresPage() {
                         </div>
                         <div>
                           <h3 className="font-medium text-text">{store.name}</h3>
-                          <div className="flex items-center gap-4 mt-2 text-sm text-muted">
+                          <div className="flex items-center gap-4 mt-2 text-sm text-text-secondary">
                             <span className="flex items-center gap-1">
                               <MapPin size={14} />
                               {store.region} {store.district || ''}
@@ -287,14 +287,14 @@ export default function StoresPage() {
                             )}
                           </div>
                           {store.address && (
-                            <p className="text-xs text-muted mt-1">{store.address}</p>
+                            <p className="text-xs text-text-secondary mt-1">{store.address}</p>
                           )}
                         </div>
                       </div>
                       <span className={`text-xs px-2 py-1 rounded-full ${
                         store.status === 'active'
-                          ? 'bg-success/10 text-success'
-                          : 'bg-gray-100 text-muted'
+                          ? 'bg-battle-green/20 text-battle-green'
+                          : 'bg-dark-border text-text-secondary'
                       }`}>
                         {store.status === 'active' ? '活跃' : store.status}
                       </span>
