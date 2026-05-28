@@ -3,9 +3,19 @@
 @tailwind utilities;
 
 :root {
-  --primary: #1E3A5F;
-  --primary-light: #2D5A87;
-  --primary-dark: #152942;
+  /* 战役主题色 */
+  --battle-blue: #3B82F6;
+  --battle-orange: #F97316;
+  --battle-purple: #8B5CF6;
+  --battle-green: #10B981;
+  --battle-gold: #EAB308;
+  
+  /* 深色背景 */
+  --dark-bg: #0F172A;
+  --dark-card: #1E293B;
+  --dark-border: #334155;
+  
+  /* 强调色 */
   --accent: #FF6B35;
   --accent-light: #FF8F5C;
   --accent-dark: #E55A26;
@@ -19,8 +29,8 @@
 
 body {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
-  background-color: #F8FAFC;
-  color: #1F2937;
+  background-color: #0F172A;
+  color: #F8FAFC;
   line-height: 1.5;
 }
 
@@ -31,16 +41,16 @@ body {
 }
 
 ::-webkit-scrollbar-track {
-  background: #f1f1f1;
+  background: #1E293B;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #c1c1c1;
+  background: #475569;
   border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #a1a1a1;
+  background: #64748B;
 }
 
 /* Page transitions */
@@ -60,7 +70,7 @@ body {
 
 .card-hover:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
 }
 
 /* Button press effect */
@@ -79,7 +89,7 @@ body {
 }
 
 .skeleton {
-  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background: linear-gradient(90deg, #1E293B 25%, #334155 50%, #1E293B 75%);
   background-size: 200% 100%;
   animation: shimmer 1.5s infinite;
 }
@@ -102,34 +112,181 @@ body {
   animation-delay: 0.4s;
 }
 
-/* Score gauge */
-.score-gauge {
+/* Glow effects for battle theme */
+.glow-blue {
+  box-shadow: 0 0 20px rgba(59, 130, 246, 0.5);
+}
+
+.glow-orange {
+  box-shadow: 0 0 20px rgba(249, 115, 22, 0.5);
+}
+
+.glow-purple {
+  box-shadow: 0 0 20px rgba(139, 92, 246, 0.5);
+}
+
+.glow-green {
+  box-shadow: 0 0 20px rgba(16, 185, 129, 0.5);
+}
+
+.glow-gold {
+  box-shadow: 0 0 20px rgba(234, 179, 8, 0.5);
+}
+
+.glow-accent {
+  box-shadow: 0 0 20px rgba(255, 107, 53, 0.5);
+}
+
+/* Battle phase badge styles */
+.phase-badge {
+  padding: 4px 12px;
+  border-radius: 9999px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.phase-preheat {
+  background: rgba(59, 130, 246, 0.2);
+  color: #60A5FA;
+  border: 1px solid rgba(59, 130, 246, 0.3);
+}
+
+.phase-exposure {
+  background: rgba(249, 115, 22, 0.2);
+  color: #FB923C;
+  border: 1px solid rgba(249, 115, 22, 0.3);
+}
+
+.phase-package {
+  background: rgba(139, 92, 246, 0.2);
+  color: #A78BFA;
+  border: 1px solid rgba(139, 92, 246, 0.3);
+}
+
+.phase-viral {
+  background: rgba(16, 185, 129, 0.2);
+  color: #34D399;
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+/* Status indicators */
+.status-completed {
+  border-left: 3px solid #10B981;
+}
+
+.status-in-progress {
+  border-left: 3px solid #F97316;
+}
+
+.status-pending {
+  border-left: 3px solid #64748B;
+}
+
+/* Gold/Silver/Bronze for rankings */
+.rank-gold {
+  background: linear-gradient(135deg, rgba(234, 179, 8, 0.1) 0%, rgba(234, 179, 8, 0.05) 100%);
+  border-left: 3px solid #EAB308;
+}
+
+.rank-silver {
+  background: linear-gradient(135deg, rgba(148, 163, 184, 0.1) 0%, rgba(148, 163, 184, 0.05) 100%);
+  border-left: 3px solid #94A3B8;
+}
+
+.rank-bronze {
+  background: linear-gradient(135deg, rgba(180, 83, 9, 0.1) 0%, rgba(180, 83, 9, 0.05) 100%);
+  border-left: 3px solid #B45309;
+}
+
+/* Heat map colors */
+.heat-good {
+  background: rgba(16, 185, 129, 0.2);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.heat-warning {
+  background: rgba(245, 158, 11, 0.2);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+.heat-danger {
+  background: rgba(239, 68, 68, 0.2);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+/* Progress bar animations */
+@keyframes progress-glow {
+  0%, 100% {
+    box-shadow: 0 0 5px currentColor;
+  }
+  50% {
+    box-shadow: 0 0 15px currentColor;
+  }
+}
+
+.progress-animated {
+  animation: progress-glow 2s ease-in-out infinite;
+}
+
+/* Store status blocks */
+.store-block {
+  padding: 12px;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.store-block:hover {
+  transform: scale(1.02);
+}
+
+/* Content factory cards */
+.content-card {
+  background: #1E293B;
+  border: 1px solid #334155;
+  border-radius: 12px;
+  padding: 16px;
+  transition: all 0.2s ease;
+}
+
+.content-card:hover {
+  border-color: #475569;
+  transform: translateY(-2px);
+}
+
+/* Timeline styles */
+.timeline-item {
   position: relative;
-  width: 80px;
-  height: 80px;
+  padding-left: 24px;
 }
 
-.score-gauge::before {
+.timeline-item::before {
   content: '';
   position: absolute;
-  inset: 0;
-  border-radius: 50%;
-  background: conic-gradient(
-    from start angle,
-    #FF6B35 var(--score-percent),
-    #E5E7EB 0
-  );
-  mask: radial-gradient(farthest side at 50% 0, transparent 55%, black 55%);
-  -webkit-mask: radial-gradient(farthest side at 50% 0, transparent 55%, black 55%);
+  left: 6px;
+  top: 24px;
+  bottom: -24px;
+  width: 2px;
+  background: #334155;
 }
 
-/* Tab active indicator */
-.tab-active::after {
-  content: '';
+.timeline-item:last-child::before {
+  display: none;
+}
+
+.timeline-dot {
   position: absolute;
-  bottom: 0;
   left: 0;
-  right: 0;
-  height: 2px;
-  background-color: #FF6B35;
+  top: 4px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 2px solid #475569;
+  background: #0F172A;
+}
+
+.timeline-dot.active {
+  background: currentColor;
+  box-shadow: 0 0 12px currentColor;
 }
