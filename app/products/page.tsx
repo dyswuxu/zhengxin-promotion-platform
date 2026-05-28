@@ -50,8 +50,8 @@ export default function ProductsPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-text">新品中心</h1>
-          <p className="text-muted mt-1">管理所有新品推广项目</p>
+          <h1 className="text-2xl font-bold text-text-primary">新品中心</h1>
+          <p className="text-text-primary-secondary mt-1">管理所有新品推广项目</p>
         </div>
         <Link
           href="/generator"
@@ -62,12 +62,12 @@ export default function ProductsPage() {
         </Link>
         <button
           onClick={() => window.location.href = '/api/export-products'}
-          className="flex items-center gap-2 px-4 py-2 border border-border rounded-lg hover:bg-gray-50 transition-colors text-sm"
+          className="flex items-center gap-2 px-4 py-2 border border-dark-border rounded-lg hover:bg-dark-bg transition-colors text-sm"
         >
           <Download size={18} />
           导出
         </button>
-        <label className="flex items-center gap-2 px-4 py-2 border border-border rounded-lg hover:bg-gray-50 transition-colors text-sm cursor-pointer">
+        <label className="flex items-center gap-2 px-4 py-2 border border-dark-border rounded-lg hover:bg-dark-bg transition-colors text-sm cursor-pointer">
           <Upload size={18} />
           导入
           <input
@@ -93,7 +93,7 @@ export default function ProductsPage() {
         </label>
         <button
           onClick={() => window.location.href = '/api/products/import?type=template'}
-          className="flex items-center gap-2 px-4 py-2 border border-border rounded-lg hover:bg-gray-50 transition-colors text-sm"
+          className="flex items-center gap-2 px-4 py-2 border border-dark-border rounded-lg hover:bg-dark-bg transition-colors text-sm"
         >
           <Download size={18} />
           下载模板
@@ -101,7 +101,7 @@ export default function ProductsPage() {
       </div>
 
       {/* Tabs and filters */}
-      <div className="bg-white rounded-xl border border-border p-4">
+      <div className="bg-dark-card rounded-xl border border-dark-border p-4">
         <div className="flex items-center justify-between gap-4">
           {/* Status tabs */}
           <div className="flex items-center gap-1">
@@ -112,7 +112,7 @@ export default function ProductsPage() {
                 className={`px-4 py-2 text-sm rounded-lg transition-colors relative ${
                   activeTab === tab.key
                     ? 'text-accent font-medium bg-accent/5'
-                    : 'text-muted hover:text-text hover:bg-gray-50'
+                    : 'text-text-primary-secondary hover:text-text-primary hover:bg-dark-bg'
                 }`}
               >
                 {tab.label}
@@ -125,13 +125,13 @@ export default function ProductsPage() {
 
           {/* Search */}
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted" size={16} />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-text-primary-secondary" size={16} />
             <input
               type="text"
               placeholder="搜索新品..."
               value={searchQuery}
               onChange={e => setSearchQuery(e.target.value)}
-              className="h-9 pl-9 pr-4 border border-border rounded-lg text-sm focus:outline-none focus:border-accent w-64"
+              className="h-9 pl-9 pr-4 border border-dark-border rounded-lg text-sm focus:outline-none focus:border-accent w-64"
             />
           </div>
         </div>
@@ -142,7 +142,7 @@ export default function ProductsPage() {
         {loading ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {[1, 2, 3, 4, 5, 6].map(i => (
-              <div key={i} className="bg-white rounded-xl border border-border p-6">
+              <div key={i} className="bg-dark-card rounded-xl border border-dark-border p-6">
                 <div className="skeleton h-4 w-24 mb-3 rounded" />
                 <div className="skeleton h-6 w-40 mb-2 rounded" />
                 <div className="skeleton h-4 w-full mb-4 rounded" />
@@ -154,12 +154,12 @@ export default function ProductsPage() {
             ))}
           </div>
         ) : filteredProducts.length === 0 ? (
-          <div className="bg-white rounded-xl border border-border p-12 text-center">
-            <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <Filter className="text-muted" size={24} />
+          <div className="bg-dark-card rounded-xl border border-dark-border p-12 text-center">
+            <div className="w-16 h-16 bg-dark-border rounded-full flex items-center justify-center mx-auto mb-4">
+              <Filter className="text-text-primary-secondary" size={24} />
             </div>
-            <h3 className="font-medium text-text mb-2">暂无新品</h3>
-            <p className="text-muted text-sm mb-4">创建您的第一个新品开始推广</p>
+            <h3 className="font-medium text-text-primary mb-2">暂无新品</h3>
+            <p className="text-text-primary-secondary text-sm mb-4">创建您的第一个新品开始推广</p>
             <Link
               href="/generator"
               className="inline-flex items-center gap-2 text-accent hover:underline"
@@ -182,35 +182,35 @@ export default function ProductsPage() {
 
 function ProductCard({ product }: { product: Product }) {
   const statusColor: Record<ProductStatus, string> = {
-    draft: 'bg-gray-100 text-gray-600',
+    draft: 'bg-dark-border text-gray-600',
     not_started: 'bg-blue-100 text-blue-600',
     promoting: 'bg-orange-100 text-orange-600',
     exploding: 'bg-green-100 text-green-600',
     review: 'bg-yellow-100 text-yellow-600',
-    ended: 'bg-gray-100 text-gray-500',
+    ended: 'bg-dark-border text-gray-500',
   };
 
   return (
     <Link
       href={`/products/${product.id}`}
-      className="bg-white rounded-xl border border-border p-6 card-hover block"
+      className="bg-dark-card rounded-xl border border-dark-border p-6 card-hover block"
     >
       <div className="flex items-start justify-between mb-3">
         <span className={`text-xs px-2 py-1 rounded-full ${statusColor[product.status]}`}>
           {ProductStatusLabel[product.status]}
         </span>
-        <span className="text-xs text-muted">{product.category}</span>
+        <span className="text-xs text-text-primary-secondary">{product.category}</span>
       </div>
 
-      <h3 className="font-semibold text-text mb-2">{product.name}</h3>
+      <h3 className="font-semibold text-text-primary mb-2">{product.name}</h3>
 
-      <div className="flex items-center gap-4 text-sm text-muted mb-4">
+      <div className="flex items-center gap-4 text-sm text-text-primary-secondary mb-4">
         <span>{formatCurrency(product.price)}</span>
         <span>·</span>
         <span>毛利率 {product.grossMargin.toFixed(1)}%</span>
       </div>
 
-      <div className="flex items-center justify-between text-xs text-muted pt-4 border-t border-border">
+      <div className="flex items-center justify-between text-xs text-text-primary-secondary pt-4 border-t border-dark-border">
         <span>上市：{formatDate(product.launchDate)}</span>
         <span>{product.region}</span>
       </div>

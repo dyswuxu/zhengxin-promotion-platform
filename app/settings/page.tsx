@@ -61,8 +61,8 @@ export default function SettingsPage() {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold text-text">系统设置</h1>
-        <p className="text-text-secondary mt-1">管理平台配置和用户偏好</p>
+        <h1 className="text-2xl font-bold text-text-primary">系统设置</h1>
+        <p className="text-text-primary-secondary mt-1">管理平台配置和用户偏好</p>
       </div>
 
       <div className="flex items-start gap-6">
@@ -78,7 +78,7 @@ export default function SettingsPage() {
                   className={`w-full flex items-center gap-3 px-4 py-3 text-sm rounded-lg transition-colors ${
                     activeSection === s.id
                       ? 'bg-accent/10 text-accent font-medium'
-                      : 'text-text-secondary hover:bg-dark-bg hover:text-text'
+                      : 'text-text-primary-secondary hover:bg-dark-bg hover:text-text-primary'
                   }`}
                 >
                   <Icon size={18} />
@@ -91,14 +91,14 @@ export default function SettingsPage() {
 
         {/* Content */}
         <div className="flex-1 bg-dark-card rounded-xl border border-dark-border p-6">
-          <h2 className="font-semibold text-text mb-6">{section.label}</h2>
+          <h2 className="font-semibold text-text-primary mb-6">{section.label}</h2>
 
           <div className="space-y-6">
             {section.fields.map(field => (
               <div key={field.key} className="flex items-center justify-between py-3 border-b border-dark-border last:border-0">
                 <div>
-                  <p className="font-medium text-text">{field.label}</p>
-                  <p className="text-xs text-text-secondary mt-0.5">
+                  <p className="font-medium text-text-primary">{field.label}</p>
+                  <p className="text-xs text-text-primary-secondary mt-0.5">
                     {field.type === 'toggle' && (field.defaultValue ? '已开启' : '已关闭')}
                   </p>
                 </div>
@@ -152,7 +152,7 @@ export default function SettingsPage() {
       </div>
 
       {/* Version info */}
-      <div className="text-center text-xs text-text-secondary">
+      <div className="text-center text-xs text-text-primary-secondary">
         <p>正新新品推广作战平台 v1.0.0 · MVP版本</p>
         <p className="mt-1">构建时间：2026-05-22</p>
       </div>
