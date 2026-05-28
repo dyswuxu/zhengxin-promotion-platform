@@ -783,12 +783,22 @@ export default function BattleCreatorWizard() {
       {currentStep === 0 && (
         <div className="flex justify-end mt-8 pt-6 border-t border-dark-border">
           <button
-            onClick={() => setCurrentStep(1)}
-            className="px-8 py-3 bg-accent text-white rounded-lg font-medium hover:bg-accent-dark transition-colors shadow-glow-accent flex items-center gap-2"
+            onClick={handleGenerate}
+            disabled={isGenerating}
+            className="px-8 py-3 bg-accent text-white rounded-lg font-medium hover:bg-accent-dark transition-colors shadow-glow-accent flex items-center gap-2 disabled:opacity-50"
           >
-            <Sparkles size={18} />
-            生成战略礼包
-            <ChevronRight size={18} />
+            {isGenerating ? (
+              <>
+                <Loader2 size={18} className="animate-spin" />
+                AI生成中...
+              </>
+            ) : (
+              <>
+                <Sparkles size={18} />
+                生成战略礼包
+                <ChevronRight size={18} />
+              </>
+            )}
           </button>
         </div>
       )}
