@@ -136,8 +136,119 @@ function PackageCard({ pkg, onClick }: { pkg: typeof mockPackages[0]; onClick: (
   );
 }
 
-function ContentVisualizer({ type }: { type: string }) {
-  if (type === 'poster') {
+function ContentVisualizer({ type, content, onVideoStatusCheck }: { type: string; content?: any; onVideoStatusCheck?: () => void }) {
+  // 如果有真实内容，使用真实内容
+  if (content) {
+    if (type === 'poster') {
+      return (
+        <div className="bg-gradient-to-br from-battle-orange/30 to-battle-orange/10 border border-battle-orange/30 rounded-xl p-6 h-full flex flex-col">
+          <div className="flex-1 bg-dark-bg rounded-lg flex items-center justify-center relative overflow-hidden">
+            {content.url ? (
+              <img src={content.url} alt="海报" className="w-full h-full object-contain rounded" />
+            ) : (
+              <div className="text-center z-10">
+                <div className="w-16 h-16 bg-battle-orange/20 rounded-full flex items-center justify-center mx-auto mb-3">
+                  <Image size={32} className="text-battle-orange" />
+                </div>
+                <div className="text-text-primary">海报生成中...</div>
+              </div>
+            )}
+          </div>
+          <div className="mt-4 text-center">
+            <span className="text-xs text-text-secondary">海报尺寸：1080×1080px</span>
+          </div>
+        </div>
+      );
+    }
+    
+    if (type === 'video') {
+      return (
+        <div className="bg-gradient-to-br from-battle-purple/30 to-battle-purple/10 border border-battle-purple/30 rounded-xl p-6 h-full">
+          <div className="bg-dark-bg rounded-lg aspect-video flex items-center justify-center relative">
+            {content.url ? (
+              <video src={content.url} controls className="w-full h-full object-contain rounded" />
+            ) : content.taskId ? (
+              <div className="text-center z-10">
+                <div className="w-16 h-16 bg-battle-purple/20 rounded-full flex items-center justify-center mx-auto mb-3">
+                  <Video size={32} className="text-battle-purple ml-1" />
+                </div>
+                <div className="text-text-primary mb-2">视频生成中...</div>
+                {onVideoStatusCheck && (
+                  <button onClick={onVideoStatusCheck} className="px-3 py-1 bg-battle-purple/20 text-battle-purple rounded text-xs">
+                    刷新状态
+                  </button>
+                )}
+              </div>
+            ) : (
+              <div className="text-center z-10">
+                <div className="w-16 h-16 bg-battle-purple/20 rounded-full flex items-center justify-center mx-auto mb-3">
+                  <Video size={32} className="text-battle-purple ml-1" />
+                </div>
+                <div className="text-text-primary">等待生成视频...</div>
+              </div>
+            )}
+          </div>
+          <div className="mt-4 text-center">
+            <span className="text-sm text-text-secondary">15秒种草视频 · 竖版</span>
+          </div>
+        </div>
+      );
+    }
+    
+    if (type === 'audio') {
+      return (
+        <div className="bg-gradient-to-br from-battle-green/30 to-battle-green/10 border border-battle-green/30 rounded-xl p-6 h-full">
+          <div className="bg-dark-bg rounded-lg p-4 flex items-center gap-4">
+            <div className="w-12 h-12 bg-battle-green/20 rounded-full flex items-center justify-center">
+              <Music size={24} className="text-battle-green" />
+            </div>
+            <div className="flex-1">
+              {content.url ? (
+                <audio src={content.url} controls className="w-full" />
+              ) : (
+                <>
+                  <div className="flex items-center gap-2 mb-2">
+                    <div className="flex-1 h-2 bg-dark-border rounded-full overflow-hidden">
+                      <div className="h-full w-1/3 bg-battle-green rounded-full animate-pulse" />
+                    </div>
+                    <span className="text-xs text-text-secondary">生成中...</span>
+                  </div>
+                  <div className="text-xs text-text-secondary">店内广播词</div>
+                </>
+              )}
+            </div>
+          </div>
+          {content.url && (
+            <div className="mt-4 p-3 bg-dark-bg rounded-lg">
+              <div className="text-xs text-text-secondary flex items-start gap-2">
+                <FileText size={14} className="text-battle-green flex-shrink-0 mt-0.5" />
+                <span>广播词音频已生成</span>
+              </div>
+            </div>
+          )}
+        </div>
+      );
+    }
+    
+    if (type === 'text') {
+      return (
+        <div className="space-y-3">
+          {(content.posts || mockContentPreview.posts).map((post: any, i: number) => (
+            <div key={i} className="bg-dark-bg rounded-lg p-4 border border-dark-border">
+              <div className="flex items-center gap-2 mb-2">
+                <span className="text-xs font-medium px-2 py-0.5 bg-battle-blue/20 text-battle-blue rounded">
+                  {post.platform}
+                </span>
+              </div>
+              <p className="text-sm text-text-primary">{post.content}</p>
+            </div>
+          ))}
+        </div>
+      );
+    }
+  }
+  
+  // Fallback to mock data
     return (
       <div className="bg-gradient-to-br from-battle-orange/30 to-battle-orange/10 border border-battle-orange/30 rounded-xl p-6 h-full flex flex-col">
         <div className="flex-1 bg-dark-bg rounded-lg flex items-center justify-center relative overflow-hidden">
@@ -241,6 +352,8 @@ export default function BattleCreatorWizard() {
     region: '全国',
   });
   const [isGenerating, setIsGenerating] = useState(false);
+  const [generatedContent, setGeneratedContent] = useState<any>(null);
+  const [isGeneratingContent, setIsGeneratingContent] = useState(false);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     setFormData(prev => ({
@@ -251,10 +364,46 @@ export default function BattleCreatorWizard() {
 
   const handleGenerate = async () => {
     setIsGenerating(true);
-    // Simulate generation
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    setIsGenerating(false);
-    setCurrentStep(2);
+    setIsGeneratingContent(true);
+    try {
+      // 真实调用AI生成内容
+      const sellingPointsArray = formData.sellingPoints.split('\n').filter((s: string) => s.trim());
+      const [posterRes, videoRes, audioRes, textRes] = await Promise.all([
+        fetch('/api/content', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ type: 'poster', productName: formData.name, sellingPoints: sellingPointsArray, price: formData.price }),
+        }),
+        fetch('/api/content', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ type: 'video', productName: formData.name, sellingPoints: sellingPointsArray, price: formData.price }),
+        }),
+        fetch('/api/content', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ type: 'audio', productName: formData.name, sellingPoints: sellingPointsArray, price: formData.price }),
+        }),
+        fetch('/api/content', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ type: 'text', productName: formData.name, sellingPoints: sellingPointsArray, price: formData.price }),
+        }),
+      ]);
+      
+      const [poster, video, audio, text] = await Promise.all([posterRes.json(), videoRes.json(), audioRes.json(), textRes.json()]);
+      
+      setGeneratedContent({ poster, video, audio, text });
+      setIsGenerating(false);
+      setIsGeneratingContent(false);
+      setCurrentStep(2);
+    } catch (e) {
+      console.error('内容生成失败:', e);
+      setIsGenerating(false);
+      setIsGeneratingContent(false);
+      // 即使失败也允许进入下一步查看
+      setCurrentStep(2);
+    }
   };
 
   const handleLaunch = () => {
@@ -499,13 +648,13 @@ export default function BattleCreatorWizard() {
           <div className="flex justify-end">
             <button
               onClick={() => setCurrentStep(2)}
-              disabled={mockPackages.some(p => p.status === 'generating')}
+              disabled={isGeneratingContent}
               className="px-6 py-3 bg-accent text-white rounded-lg font-medium hover:bg-accent-dark transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
             >
-              {mockPackages.some(p => p.status === 'generating') ? (
+              {isGeneratingContent ? (
                 <>
                   <Loader2 size={18} className="animate-spin" />
-                  生成中...
+                  AI生成中...
                 </>
               ) : (
                 <>
@@ -533,7 +682,7 @@ export default function BattleCreatorWizard() {
                 <Image size={16} className="text-battle-orange" />
                 海报物料
               </h3>
-              <ContentVisualizer type="poster" />
+              <ContentVisualizer type="poster" content={generatedContent?.poster} />
             </div>
             
             {/* Video */}
@@ -542,7 +691,7 @@ export default function BattleCreatorWizard() {
                 <Video size={16} className="text-battle-purple" />
                 视频物料
               </h3>
-              <ContentVisualizer type="video" />
+              <ContentVisualizer type="video" content={generatedContent?.video} />
             </div>
             
             {/* Audio */}
@@ -551,7 +700,7 @@ export default function BattleCreatorWizard() {
                 <Music size={16} className="text-battle-green" />
                 音频物料
               </h3>
-              <ContentVisualizer type="audio" />
+              <ContentVisualizer type="audio" content={generatedContent?.audio} />
             </div>
             
             {/* Text */}
@@ -560,7 +709,7 @@ export default function BattleCreatorWizard() {
                 <FileText size={16} className="text-battle-blue" />
                 文案物料
               </h3>
-              <ContentVisualizer type="text" />
+              <ContentVisualizer type="text" content={generatedContent?.text} />
             </div>
           </div>
           
