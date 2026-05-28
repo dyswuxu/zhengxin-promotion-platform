@@ -110,7 +110,7 @@ export default function StoresPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-text-primary">门店管理</h1>
-          <p className="text-text-primary-secondary mt-1">管理所有门店信息，共 {stores.length} 家门店</p>
+          <p className="text-text-secondary mt-1">管理所有门店信息，共 {stores.length} 家门店</p>
         </div>
         <div className="flex items-center gap-3">
           <button
@@ -141,9 +141,9 @@ export default function StoresPage() {
 
             <form onSubmit={handleImport} className="space-y-4">
               <div className="border-2 border-dashed border-dark-border rounded-lg p-6 text-center hover:border-accent transition-colors">
-                <FileSpreadsheet className="mx-auto text-text-primary-secondary mb-3" size={36} />
-                <p className="text-sm text-text-primary-secondary mb-2">点击选择Excel文件</p>
-                <p className="text-xs text-text-primary-secondary">支持 .xlsx, .xls 格式</p>
+                <FileSpreadsheet className="mx-auto text-text-secondary mb-3" size={36} />
+                <p className="text-sm text-text-secondary mb-2">点击选择Excel文件</p>
+                <p className="text-xs text-text-secondary">支持 .xlsx, .xls 格式</p>
                 <input
                   type="file"
                   name="file"
@@ -183,7 +183,7 @@ export default function StoresPage() {
             {/* Import Tips */}
             <div className="mt-6 p-4 bg-dark-bg rounded-lg">
               <h3 className="text-sm font-medium text-text-primary mb-2">导入说明</h3>
-              <ul className="text-xs text-text-primary-secondary space-y-1">
+              <ul className="text-xs text-text-secondary space-y-1">
                 <li>• 第一行为表头，请勿修改</li>
                 <li>• 必填字段：门店名称、所在区域</li>
                 <li>• 可选字段：城市、区县、地址、店长姓名、联系电话</li>
@@ -199,7 +199,7 @@ export default function StoresPage() {
             {/* Filters */}
             <div className="flex items-center gap-4 mb-6">
               <div className="relative flex-1">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-text-primary-secondary" size={16} />
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-text-secondary" size={16} />
                 <input
                   type="text"
                   placeholder="搜索门店名称、区县、店长..."
@@ -211,7 +211,7 @@ export default function StoresPage() {
               <select
                 value={regionFilter}
                 onChange={e => setRegionFilter(e.target.value)}
-                className="h-10 px-3 border border-dark-border rounded-lg text-sm focus:outline-none focus:border-accent"
+                className="h-10 px-3 border border-dark-border rounded-lg text-sm focus:outline-none focus:border-accent bg-dark-bg text-text-primary"
               >
                 <option value="all">全部区域</option>
                 {regions.map(r => (
@@ -224,17 +224,17 @@ export default function StoresPage() {
             <div className="grid grid-cols-3 gap-4 mb-6">
               <div className="bg-battle-blue/10 rounded-lg p-4 text-center">
                 <p className="text-2xl font-bold text-primary">{stores.length}</p>
-                <p className="text-xs text-text-primary-secondary">门店总数</p>
+                <p className="text-xs text-text-secondary">门店总数</p>
               </div>
               <div className="bg-battle-green/10 rounded-lg p-4 text-center">
                 <p className="text-2xl font-bold text-success">
                   {stores.filter(s => s.status === 'active').length}
                 </p>
-                <p className="text-xs text-text-primary-secondary">活跃门店</p>
+                <p className="text-xs text-text-secondary">活跃门店</p>
               </div>
               <div className="bg-battle-orange/10 rounded-lg p-4 text-center">
                 <p className="text-2xl font-bold text-accent">{regions.length}</p>
-                <p className="text-xs text-text-primary-secondary">覆盖区域</p>
+                <p className="text-xs text-text-secondary">覆盖区域</p>
               </div>
             </div>
 
@@ -250,9 +250,9 @@ export default function StoresPage() {
               </div>
             ) : filteredStores.length === 0 ? (
               <div className="text-center py-12">
-                <Store className="mx-auto text-text-primary-secondary mb-4" size={48} />
-                <p className="text-text-primary-secondary">暂无门店数据</p>
-                <p className="text-xs text-text-primary-secondary mt-1">请先导入门店数据</p>
+                <Store className="mx-auto text-text-secondary mb-4" size={48} />
+                <p className="text-text-secondary">暂无门店数据</p>
+                <p className="text-xs text-text-secondary mt-1">请先导入门店数据</p>
               </div>
             ) : (
               <div className="space-y-3">
@@ -268,7 +268,7 @@ export default function StoresPage() {
                         </div>
                         <div>
                           <h3 className="font-medium text-text-primary">{store.name}</h3>
-                          <div className="flex items-center gap-4 mt-2 text-sm text-text-primary-secondary">
+                          <div className="flex items-center gap-4 mt-2 text-sm text-text-secondary">
                             <span className="flex items-center gap-1">
                               <MapPin size={14} />
                               {store.region} {store.district || ''}
@@ -287,14 +287,14 @@ export default function StoresPage() {
                             )}
                           </div>
                           {store.address && (
-                            <p className="text-xs text-text-primary-secondary mt-1">{store.address}</p>
+                            <p className="text-xs text-text-secondary mt-1">{store.address}</p>
                           )}
                         </div>
                       </div>
                       <span className={`text-xs px-2 py-1 rounded-full ${
                         store.status === 'active'
                           ? 'bg-battle-green/20 text-battle-green'
-                          : 'bg-dark-border text-text-primary-secondary'
+                          : 'bg-dark-border text-text-secondary'
                       }`}>
                         {store.status === 'active' ? '活跃' : store.status}
                       </span>
