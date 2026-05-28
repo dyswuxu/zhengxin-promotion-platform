@@ -231,9 +231,10 @@ function ContentVisualizer({ type, content, onVideoStatusCheck }: { type: string
     }
     
     if (type === 'text') {
+      const posts = Array.isArray(content.posts) ? content.posts : (typeof content.posts === 'string' ? [{ platform: '文案', content: content.posts }] : []);
       return (
         <div className="space-y-3">
-          {(content.posts || mockContentPreview.posts).map((post: any, i: number) => (
+          {posts.length > 0 ? posts.map((post: any, i: number) => (
             <div key={i} className="bg-dark-bg rounded-lg p-4 border border-dark-border">
               <div className="flex items-center gap-2 mb-2">
                 <span className="text-xs font-medium px-2 py-0.5 bg-battle-blue/20 text-battle-blue rounded">
@@ -242,11 +243,19 @@ function ContentVisualizer({ type, content, onVideoStatusCheck }: { type: string
               </div>
               <p className="text-sm text-text-primary">{post.content}</p>
             </div>
-          ))}
+          )) : <div className="text-text-secondary text-sm">文案生成中...</div>}
         </div>
       );
     }
   }
+
+    if (content.error) {
+      return (
+        <div className="bg-dark-bg rounded-lg p-4 flex items-center justify-center h-full">
+          <div className="text-text-secondary text-sm text-center">{content.error}</div>
+        </div>
+      );
+    }
 
   // Fallback to mock data when no content generated yet
   if (type === 'poster') {
