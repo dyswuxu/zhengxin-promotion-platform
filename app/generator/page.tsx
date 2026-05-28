@@ -59,7 +59,7 @@ const mockPackages = [
     icon: '📢', 
     name: '新品传播包', 
     desc: '海报、视频、文案一站式产出',
-    status: 'generating',
+    status: 'generated',
     details: ['主视觉海报×3', '15秒种草视频', '朋友圈文案×5', '小红书种草笔记']
   },
   { 
