@@ -91,11 +91,12 @@ async function generateAudio(productName: string, sellingPoints: string[], price
       format: 'mp3',
       sample_rate: 32000,
     },
+    output_format: 'url',
   });
   
-  const audioData = response.data?.audio || response.audio_url || '';
-  if (audioData) {
-    return `data:audio/mp3;base64,${audioData}`;
+  const url = response.data?.audio_url || response.audio_url || response.url || '';
+  if (url) {
+    return url;
   }
   return '';
 }
@@ -110,11 +111,12 @@ async function generateMusic(productName: string, sellingPoints: string[], price
     model: 'music-2.6',
     prompt,
     lyrics: `正新鸡排${productName}，美味难挡！${sellingPoints[0] || '酥脆多汁'}，一口沦陷！新品尝鲜价${price}元，全国门店同步发售！`,
+    output_format: 'url',
   });
   
-  const audioData = data.data?.audio || '';
-  if (audioData) {
-    return `data:audio/mp3;base64,${audioData}`;
+  const musicUrl = data.data?.audio_url || data.audio_url || data.url || '';
+  if (musicUrl) {
+    return musicUrl;
   }
   return '';
 }
