@@ -430,6 +430,13 @@ export default function BattleCreatorWizard() {
     text: true,
   });
   const [editingItem, setEditingItem] = useState<string | null>(null);
+  const [itemDescriptions, setItemDescriptions] = useState<Record<string, string>>({
+    poster: '美食摄影风格，无文字纯视觉，深橙暖色调背景',
+    video: '产品特写+门店场景+试吃，食欲感强节奏明快',
+    audio: '新品叫卖音频，温暖亲切，适合门店广播',
+    music: '品牌宣传歌曲，节奏明快活泼，传递美味欢乐氛围',
+    text: '朋友圈文案+小红书种草+门店话术',
+  });
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     setFormData(prev => ({
@@ -747,7 +754,24 @@ export default function BattleCreatorWizard() {
                   <div className="font-medium text-text-primary">海报物料</div>
                   <div className="text-xs text-text-secondary">image-01 模型</div>
                 </div>
+                <button
+                  onClick={() => setEditingItem(editingItem === 'poster' ? null : 'poster')}
+                  className="text-xs px-2 py-1 bg-accent/20 text-accent rounded hover:bg-accent/30 transition-colors"
+                >
+                  {editingItem === 'poster' ? '收起' : '编辑'}
+                </button>
               </div>
+              {editingItem === 'poster' && (
+                <div className="mt-3 p-3 bg-dark-bg rounded-lg border border-dark-border">
+                  <textarea
+                    value={itemDescriptions.poster}
+                    onChange={(e) => setItemDescriptions(prev => ({ ...prev, poster: e.target.value }))}
+                    placeholder="描述内容特点..."
+                    className="w-full px-3 py-2 bg-dark-card border border-dark-border rounded text-text-primary text-sm resize-none"
+                    rows={2}
+                  />
+                </div>
+              )}
               <div className="text-sm text-text-secondary space-y-1">
                 <p>• 产品：<span className="text-text-primary">{formData.name}</span></p>
                 <p>• 卖点：<span className="text-text-primary">{formData.sellingPoints.split('\n')[0] || '酥脆美味'}</span></p>
@@ -772,7 +796,24 @@ export default function BattleCreatorWizard() {
                   <div className="font-medium text-text-primary">视频物料</div>
                   <div className="text-xs text-text-secondary">video-01 模型</div>
                 </div>
+                <button
+                  onClick={() => setEditingItem(editingItem === 'video' ? null : 'video')}
+                  className="text-xs px-2 py-1 bg-accent/20 text-accent rounded hover:bg-accent/30 transition-colors"
+                >
+                  {editingItem === 'video' ? '收起' : '编辑'}
+                </button>
               </div>
+              {editingItem === 'video' && (
+                <div className="mt-3 p-3 bg-dark-bg rounded-lg border border-dark-border">
+                  <textarea
+                    value={itemDescriptions.video}
+                    onChange={(e) => setItemDescriptions(prev => ({ ...prev, video: e.target.value }))}
+                    placeholder="描述视频风格..."
+                    className="w-full px-3 py-2 bg-dark-card border border-dark-border rounded text-text-primary text-sm resize-none"
+                    rows={2}
+                  />
+                </div>
+              )}
               <div className="text-sm text-text-secondary space-y-1">
                 <p>• 产品：<span className="text-text-primary">{formData.name}</span></p>
                 <p>• 时长：<span className="text-text-primary">15秒竖版</span></p>
@@ -797,7 +838,24 @@ export default function BattleCreatorWizard() {
                   <div className="font-medium text-text-primary">音频物料</div>
                   <div className="text-xs text-text-secondary">Speech 2.8 模型</div>
                 </div>
+                <button
+                  onClick={() => setEditingItem(editingItem === 'audio' ? null : 'audio')}
+                  className="text-xs px-2 py-1 bg-accent/20 text-accent rounded hover:bg-accent/30 transition-colors"
+                >
+                  {editingItem === 'audio' ? '收起' : '编辑'}
+                </button>
               </div>
+              {editingItem === 'audio' && (
+                <div className="mt-3 p-3 bg-dark-bg rounded-lg border border-dark-border">
+                  <textarea
+                    value={itemDescriptions.audio}
+                    onChange={(e) => setItemDescriptions(prev => ({ ...prev, audio: e.target.value }))}
+                    placeholder="描述音频风格..."
+                    className="w-full px-3 py-2 bg-dark-card border border-dark-border rounded text-text-primary text-sm resize-none"
+                    rows={2}
+                  />
+                </div>
+              )}
               <div className="text-sm text-text-secondary space-y-1">
                 <p>• 产品：<span className="text-text-primary">{formData.name}</span></p>
                 <p>• 价格：<span className="text-text-primary">¥{formData.price}</span></p>
@@ -822,7 +880,24 @@ export default function BattleCreatorWizard() {
                   <div className="font-medium text-text-primary">音乐物料</div>
                   <div className="text-xs text-text-secondary">Music-2.6 模型</div>
                 </div>
+                <button
+                  onClick={() => setEditingItem(editingItem === 'music' ? null : 'music')}
+                  className="text-xs px-2 py-1 bg-accent/20 text-accent rounded hover:bg-accent/30 transition-colors"
+                >
+                  {editingItem === 'music' ? '收起' : '编辑'}
+                </button>
               </div>
+              {editingItem === 'music' && (
+                <div className="mt-3 p-3 bg-dark-bg rounded-lg border border-dark-border">
+                  <textarea
+                    value={itemDescriptions.music}
+                    onChange={(e) => setItemDescriptions(prev => ({ ...prev, music: e.target.value }))}
+                    placeholder="描述音乐风格..."
+                    className="w-full px-3 py-2 bg-dark-card border border-dark-border rounded text-text-primary text-sm resize-none"
+                    rows={2}
+                  />
+                </div>
+              )}
               <div className="text-sm text-text-secondary space-y-1">
                 <p>• 产品：<span className="text-text-primary">{formData.name}</span></p>
                 <p>• 时长：<span className="text-text-primary">约30秒</span></p>
@@ -847,7 +922,24 @@ export default function BattleCreatorWizard() {
                   <div className="font-medium text-text-primary">文案物料</div>
                   <div className="text-xs text-text-secondary">M2.7-highspeed 模型</div>
                 </div>
+                <button
+                  onClick={() => setEditingItem(editingItem === 'text' ? null : 'text')}
+                  className="text-xs px-2 py-1 bg-accent/20 text-accent rounded hover:bg-accent/30 transition-colors"
+                >
+                  {editingItem === 'text' ? '收起' : '编辑'}
+                </button>
               </div>
+              {editingItem === 'text' && (
+                <div className="mt-3 p-3 bg-dark-bg rounded-lg border border-dark-border">
+                  <textarea
+                    value={itemDescriptions.text}
+                    onChange={(e) => setItemDescriptions(prev => ({ ...prev, text: e.target.value }))}
+                    placeholder="描述文案风格..."
+                    className="w-full px-3 py-2 bg-dark-card border border-dark-border rounded text-text-primary text-sm resize-none"
+                    rows={2}
+                  />
+                </div>
+              )}
               <div className="text-sm text-text-secondary space-y-1">
                 <p>• 产品：<span className="text-text-primary">{formData.name}</span></p>
                 <p>• 包含：<span className="text-text-primary">朋友圈文案+小红书种草+门店话术</span></p>
