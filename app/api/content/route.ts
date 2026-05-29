@@ -48,8 +48,10 @@ async function generateVideo(productName: string, sellingPoints: string[]): Prom
   const prompt = `15秒正新鸡排新品种草视频，画面节奏明快食欲感强，包含产品特写、门店场景、消费者试吃等镜头，核心卖点：${sellingPoints[0] || '酥脆美味'}`;
   
   const data = await callMiniMax('/video_generation', {
-    model: 'video-01',
+    model: 'MiniMax-Hailuo-2.3',
     prompt,
+    duration: 6,
+    resolution: '768P',
   });
   
   return { taskId: data.task_id || data.id || '' };
@@ -78,7 +80,7 @@ async function generateAudio(productName: string, sellingPoints: string[], price
     text,
     stream: false,
     voice_setting: {
-      voice_id: 'Chinese (Mandarin)_Warm_Girl',
+      voice_id: 'male-qn-qingse',
     },
     audio_setting: {
       format: 'mp3',
