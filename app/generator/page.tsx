@@ -230,6 +230,41 @@ function ContentVisualizer({ type, content, onVideoStatusCheck }: { type: string
       );
     }
     
+    if (type === 'music') {
+      return (
+        <div className="bg-gradient-to-br from-yellow-500/30 to-yellow-500/10 border border-yellow-500/30 rounded-xl p-6 h-full">
+          <div className="bg-dark-bg rounded-lg p-4 flex items-center gap-4">
+            <div className="w-12 h-12 bg-yellow-500/20 rounded-full flex items-center justify-center">
+              <Music size={24} className="text-yellow-500" />
+            </div>
+            <div className="flex-1">
+              {content.url ? (
+                <audio src={content.url} controls className="w-full" />
+              ) : (
+                <>
+                  <div className="flex items-center gap-2 mb-2">
+                    <div className="flex-1 h-2 bg-dark-border rounded-full overflow-hidden">
+                      <div className="h-full w-1/3 bg-yellow-500 rounded-full animate-pulse" />
+                    </div>
+                    <span className="text-xs text-text-secondary">生成中...</span>
+                  </div>
+                  <div className="text-xs text-text-secondary">品牌宣传歌曲</div>
+                </>
+              )}
+            </div>
+          </div>
+          {content.url && (
+            <div className="mt-4 p-3 bg-dark-bg rounded-lg">
+              <div className="text-xs text-text-secondary flex items-start gap-2">
+                <FileText size={14} className="text-yellow-500 flex-shrink-0 mt-0.5" />
+                <span>宣传歌曲已生成</span>
+              </div>
+            </div>
+          )}
+        </div>
+      );
+    }
+    
     if (type === 'text') {
       const posts = Array.isArray(content.posts) ? content.posts : (typeof content.posts === 'string' ? [{ platform: '文案', content: content.posts }] : []);
       return (
@@ -324,6 +359,33 @@ function ContentVisualizer({ type, content, onVideoStatusCheck }: { type: string
     );
   }
   
+  if (type === 'music') {
+    return (
+      <div className="bg-gradient-to-br from-yellow-500/30 to-yellow-500/10 border border-yellow-500/30 rounded-xl p-6 h-full">
+        <div className="bg-dark-bg rounded-lg p-4 flex items-center gap-4">
+          <div className="w-12 h-12 bg-yellow-500/20 rounded-full flex items-center justify-center">
+            <Music size={24} className="text-yellow-500" />
+          </div>
+          <div className="flex-1">
+            <div className="flex items-center gap-2 mb-2">
+              <div className="flex-1 h-2 bg-dark-border rounded-full overflow-hidden">
+                <div className="h-full w-1/3 bg-yellow-500 rounded-full" />
+              </div>
+              <span className="text-xs text-text-secondary">30s</span>
+            </div>
+            <div className="text-xs text-text-secondary">品牌宣传歌曲</div>
+          </div>
+        </div>
+        <div className="mt-4 p-3 bg-dark-bg rounded-lg">
+          <div className="text-xs text-text-secondary flex items-start gap-2">
+            <FileText size={14} className="text-yellow-500 flex-shrink-0 mt-0.5" />
+            <span>正新鸡排品牌宣传曲</span>
+          </div>
+        </div>
+      </div>
+    );
+  }
+  
   if (type === 'text') {
     return (
       <div className="space-y-3">
@@ -346,7 +408,7 @@ function ContentVisualizer({ type, content, onVideoStatusCheck }: { type: string
 
 export default function BattleCreatorWizard() {
   const router = useRouter();
-  const [currentStep, setCurrentStep] = useState(0);
+  const [currentStep, setCurrentStep] = useState<number>(0);
   const [formData, setFormData] = useState({
     name: '蔬香鸡腿排',
     category: '鸡排',
@@ -418,6 +480,16 @@ export default function BattleCreatorWizard() {
         tempContent.text = await r.json();
       } catch(e) { tempContent.text = { error: '文案请求失败', posts: [] }; }
       
+      // 5. 音乐
+      try {
+        const r = await fetch('/api/content', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ type: 'music', productName: formData.name, sellingPoints: sellingPointsArray, price: formData.price }),
+        });
+        tempContent.music = await r.json();
+      } catch(e) { tempContent.music = { error: '音乐请求失败' }; }
+      
       setGeneratedContent(tempContent);
     } catch (e) {
       console.error('内容生成失败:', e);
@@ -425,7 +497,7 @@ export default function BattleCreatorWizard() {
     
     setIsGenerating(false);
     setIsGeneratingContent(false);
-    setCurrentStep(2);
+    setCurrentStep(3);
   };
 
   const handleLaunch = () => {
@@ -636,8 +708,142 @@ export default function BattleCreatorWizard() {
         </div>
       )}
 
-      {/* Step 2: Packages */}
+      {/* Step 1: Content Plan Confirmation */}
       {currentStep === 1 && (
+        <div className="space-y-6">
+          <div>
+            <h2 className="text-xl font-bold text-text-primary">AI内容方案确认</h2>
+            <p className="text-text-secondary mt-1">请确认以下内容生成方案，AI将根据您的选择进行创作</p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {/* 海报 */}
+            <div className="bg-dark-card rounded-xl border border-dark-border p-5">
+              <div className="flex items-center gap-3 mb-3">
+                <div className="w-10 h-10 bg-battle-orange/20 rounded-lg flex items-center justify-center">
+                  <Image size={20} className="text-battle-orange" />
+                </div>
+                <div>
+                  <div className="font-medium text-text-primary">海报物料</div>
+                  <div className="text-xs text-text-secondary">image-01 模型</div>
+                </div>
+              </div>
+              <div className="text-sm text-text-secondary space-y-1">
+                <p>• 产品：<span className="text-text-primary">{formData.name}</span></p>
+                <p>• 卖点：<span className="text-text-primary">{formData.sellingPoints.split('\n')[0] || '酥脆美味'}</span></p>
+                <p>• 价格：<span className="text-text-primary">¥{formData.price}</span></p>
+                <p className="text-xs mt-2 text-text-secondary">美食摄影风格，无文字纯视觉，深橙暖色调背景</p>
+              </div>
+            </div>
+
+            {/* 视频 */}
+            <div className="bg-dark-card rounded-xl border border-dark-border p-5">
+              <div className="flex items-center gap-3 mb-3">
+                <div className="w-10 h-10 bg-battle-purple/20 rounded-lg flex items-center justify-center">
+                  <Video size={20} className="text-battle-purple" />
+                </div>
+                <div>
+                  <div className="font-medium text-text-primary">视频物料</div>
+                  <div className="text-xs text-text-secondary">Hailuo-2.3-Fast 模型</div>
+                </div>
+              </div>
+              <div className="text-sm text-text-secondary space-y-1">
+                <p>• 产品：<span className="text-text-primary">{formData.name}</span></p>
+                <p>• 时长：<span className="text-text-primary">15秒竖版</span></p>
+                <p>• 卖点：<span className="text-text-primary">{formData.sellingPoints.split('\n')[0] || '酥脆美味'}</span></p>
+                <p className="text-xs mt-2 text-text-secondary">产品特写+门店场景+试吃，食欲感强节奏明快</p>
+              </div>
+            </div>
+
+            {/* 音频 */}
+            <div className="bg-dark-card rounded-xl border border-dark-border p-5">
+              <div className="flex items-center gap-3 mb-3">
+                <div className="w-10 h-10 bg-battle-green/20 rounded-lg flex items-center justify-center">
+                  <Music size={20} className="text-battle-green" />
+                </div>
+                <div>
+                  <div className="font-medium text-text-primary">音频物料</div>
+                  <div className="text-xs text-text-secondary">Speech 2.8 模型</div>
+                </div>
+              </div>
+              <div className="text-sm text-text-secondary space-y-1">
+                <p>• 产品：<span className="text-text-primary">{formData.name}</span></p>
+                <p>• 价格：<span className="text-text-primary">¥{formData.price}</span></p>
+                <p>• 卖点：<span className="text-text-primary">{formData.sellingPoints.split('\n')[0] || '酥脆美味'}</span></p>
+                <p className="text-xs mt-2 text-text-secondary">新品叫卖音频，温暖亲切女声，适合门店广播</p>
+              </div>
+            </div>
+
+            {/* 音乐 */}
+            <div className="bg-dark-card rounded-xl border border-dark-border p-5">
+              <div className="flex items-center gap-3 mb-3">
+                <div className="w-10 h-10 bg-yellow-500/20 rounded-lg flex items-center justify-center">
+                  <Music size={20} className="text-yellow-500" />
+                </div>
+                <div>
+                  <div className="font-medium text-text-primary">音乐物料</div>
+                  <div className="text-xs text-text-secondary">Music-2.6 模型</div>
+                </div>
+              </div>
+              <div className="text-sm text-text-secondary space-y-1">
+                <p>• 产品：<span className="text-text-primary">{formData.name}</span></p>
+                <p>• 时长：<span className="text-text-primary">约30秒</span></p>
+                <p>• 卖点：<span className="text-text-primary">{formData.sellingPoints.split('\n')[0] || '酥脆美味'}</span></p>
+                <p className="text-xs mt-2 text-text-secondary">品牌宣传歌曲，节奏明快活泼，传递美味欢乐氛围</p>
+              </div>
+            </div>
+
+            {/* 文案 */}
+            <div className="bg-dark-card rounded-xl border border-dark-border p-5">
+              <div className="flex items-center gap-3 mb-3">
+                <div className="w-10 h-10 bg-battle-blue/20 rounded-lg flex items-center justify-center">
+                  <FileText size={20} className="text-battle-blue" />
+                </div>
+                <div>
+                  <div className="font-medium text-text-primary">文案物料</div>
+                  <div className="text-xs text-text-secondary">M2.7-highspeed 模型</div>
+                </div>
+              </div>
+              <div className="text-sm text-text-secondary space-y-1">
+                <p>• 产品：<span className="text-text-primary">{formData.name}</span></p>
+                <p>• 包含：<span className="text-text-primary">朋友圈文案+小红书种草+门店话术</span></p>
+                <p className="text-xs mt-2 text-text-secondary">3种文案风格，含emoji，轻松亲切种草风格</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="flex justify-between mt-8 pt-6 border-t border-dark-border">
+            <button
+              onClick={() => setCurrentStep(0)}
+              className="px-6 py-3 bg-dark-bg text-text-secondary rounded-lg font-medium hover:bg-dark-border transition-colors flex items-center gap-2"
+            >
+              <ChevronLeft size={18} />
+              返回修改信息
+            </button>
+            <button
+              onClick={handleGenerate}
+              disabled={isGenerating}
+              className="px-8 py-3 bg-accent text-white rounded-lg font-medium hover:bg-accent-dark transition-colors shadow-glow-accent flex items-center gap-2 disabled:opacity-50"
+            >
+              {isGenerating ? (
+                <>
+                  <Loader2 size={18} className="animate-spin" />
+                  AI生成中...
+                </>
+              ) : (
+                <>
+                  <Sparkles size={18} />
+                  确认生成
+                  <ChevronRight size={18} />
+                </>
+              )}
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Step 2: Packages */}
+      {currentStep === 2 && (
         <div className="space-y-6">
           <div className="flex items-center justify-between">
             <div>
@@ -669,7 +875,7 @@ export default function BattleCreatorWizard() {
           
           <div className="flex justify-end">
             <button
-              onClick={() => setCurrentStep(2)}
+              onClick={() => setCurrentStep(3)}
               disabled={isGeneratingContent}
               className="px-6 py-3 bg-accent text-white rounded-lg font-medium hover:bg-accent-dark transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
             >
@@ -690,7 +896,7 @@ export default function BattleCreatorWizard() {
       )}
 
       {/* Step 3: Content Preview */}
-      {currentStep === 2 && (
+      {currentStep === 3 && (
         <div className="space-y-6">
           <div>
             <h2 className="text-xl font-bold text-text-primary">传播包内容预览</h2>
@@ -725,6 +931,15 @@ export default function BattleCreatorWizard() {
               <ContentVisualizer type="audio" content={generatedContent?.audio} />
             </div>
             
+            {/* Music */}
+            <div>
+              <h3 className="text-sm font-medium text-text-secondary mb-3 flex items-center gap-2">
+                <Music size={16} className="text-yellow-500" />
+                音乐物料
+              </h3>
+              <ContentVisualizer type="music" content={generatedContent?.music} />
+            </div>
+            
             {/* Text */}
             <div>
               <h3 className="text-sm font-medium text-text-secondary mb-3 flex items-center gap-2">
@@ -755,7 +970,7 @@ export default function BattleCreatorWizard() {
       )}
 
       {/* Step 4: Launch */}
-      {currentStep === 3 && (
+      {currentStep === 4 && (
         <div className="max-w-2xl mx-auto text-center py-12">
           <div className="w-24 h-24 bg-gradient-to-br from-accent to-battle-orange rounded-full flex items-center justify-center mx-auto mb-8 shadow-glow-accent animate-pulse">
             <Rocket size={48} className="text-white" />
@@ -808,22 +1023,12 @@ export default function BattleCreatorWizard() {
       {currentStep === 0 && (
         <div className="flex justify-end mt-8 pt-6 border-t border-dark-border">
           <button
-            onClick={handleGenerate}
-            disabled={isGenerating}
-            className="px-8 py-3 bg-accent text-white rounded-lg font-medium hover:bg-accent-dark transition-colors shadow-glow-accent flex items-center gap-2 disabled:opacity-50"
+            onClick={() => setCurrentStep(1)}
+            className="px-8 py-3 bg-accent text-white rounded-lg font-medium hover:bg-accent-dark transition-colors shadow-glow-accent flex items-center gap-2"
           >
-            {isGenerating ? (
-              <>
-                <Loader2 size={18} className="animate-spin" />
-                AI生成中...
-              </>
-            ) : (
-              <>
-                <Sparkles size={18} />
-                生成战略礼包
-                <ChevronRight size={18} />
-              </>
-            )}
+            <Sparkles size={18} />
+            生成战略礼包
+            <ChevronRight size={18} />
           </button>
         </div>
       )}

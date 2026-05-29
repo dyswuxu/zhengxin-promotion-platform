@@ -3,7 +3,7 @@ import { NextResponse } from 'next/server';
 export const dynamic = 'force-dynamic';
 
 interface ContentRequest {
-  type: 'poster' | 'video' | 'audio' | 'text';
+  type: 'poster' | 'video' | 'audio' | 'music' | 'text';
   productName: string;
   sellingPoints: string[];
   price: number;
@@ -11,7 +11,6 @@ interface ContentRequest {
 }
 
 const API_KEY = process.env.MINIMAX_API_KEY;
-
 const API_BASE = 'https://api.minimaxi.com';
 
 async function callMiniMax(endpoint: string, body: any): Promise<any> {
@@ -32,7 +31,7 @@ async function callMiniMax(endpoint: string, body: any): Promise<any> {
 
 // 生成海报图片
 async function generatePoster(productName: string, sellingPoints: string[], price: number): Promise<string> {
-  const prompt = `正新鸡排新品海报，风格：美食摄影，深橙色背景，产品名称"${productName}"大字居中，副标题"新品上市 限时尝鲜"，底部"正新鸡排 全国门店同步发售"，简洁专业风格，适合打印喷绘`;
+  const prompt = `正新鸡排美食摄影风格海报，深橙色暖色调背景食欲感强，产品"${productName}"特写占主体，配酱汁光泽和食欲配色，无任何文字纯视觉美食图，专业商业摄影高清质感。`;
   
   const data = await callMiniMax('/image_generation', {
     model: 'image-01',
@@ -46,7 +45,7 @@ async function generatePoster(productName: string, sellingPoints: string[], pric
 
 // 生成种草视频
 async function generateVideo(productName: string, sellingPoints: string[]): Promise<{ taskId: string }> {
-  const prompt = `15秒正新鸡排新品种草视频脚本：开场产品特写，中段展示美味口感，结尾LOGO定格。风格：食欲感强、明快节奏、暖色调。产品：${productName}，核心卖点：${sellingPoints[0] || '酥脆美味'}`;
+  const prompt = `15秒正新鸡排新品种草视频，画面节奏明快食欲感强，包含产品特写、门店场景、消费者试吃等镜头，核心卖点：${sellingPoints[0] || '酥脆美味'}`;
   
   const data = await callMiniMax('/video_generation', {
     model: 'MiniMax-Hailuo-2.3-Fast',
@@ -70,17 +69,16 @@ async function getVideoStatus(taskId: string): Promise<{ status: string; url?: s
   };
 }
 
-// 生成音频（店内广播词）
+// 生成音频（叫卖）
 async function generateAudio(productName: string, sellingPoints: string[], price: number): Promise<string> {
-  const text = `欢迎光临正新鸡排！本店新品「${productName}」震撼上市！${sellingPoints[0] || '酥脆多汁'}，一口沦陷！新品尝鲜价仅需${price}元，限时优惠，欢迎品尝！`;
+  const text = `好消息！正新鸡排隆重推出新品——${productName}！${sellingPoints[0] || '表皮酥脆 内里鲜嫩'}，一口下去超满足！新品尝鲜价，只要${price}元！全国门店同步上市，欢迎品尝！`;
   
-  // 使用 speech-2.8-hd 模型，音频直接返回（不返回taskId）
   const response = await callMiniMax('/t2a_v2', {
-    model: 'speech-2.8-hd',
+    model: 'speech-2.8',
     text,
     stream: false,
     voice_setting: {
-      voice_id: 'Chinese (Mandarin)_Kind-hearted_Antie',
+      voice_id: 'Chinese (Mandarin)_Warm_and_Friendly_Nancy',
     },
     audio_setting: {
       format: 'mp3',
@@ -88,44 +86,43 @@ async function generateAudio(productName: string, sellingPoints: string[], price
     },
   });
   
-  // 如果返回的是 base64 音频数据，格式: data.audio
   const audioData = response.data?.audio || response.audio_url || '';
   if (audioData) {
-    // 将 base64 音频转为可访问的 URL
-    // 由于 Next.js API route 不能直接返回二进制，我们返回 data URL
     return `data:audio/mp3;base64,${audioData}`;
   }
   return '';
 }
 
-// 生成文案
-async function generateText(productName: string, sellingPoints: string[], price: number, targetUser?: string): Promise<{ posts: Array<{ platform: string; content: string }> }> {
-  const prompt = `为正新鸡排新品"${productName}"生成朋友圈和小红书推广文案。
+// 生成音乐（宣传歌曲）
+async function generateMusic(productName: string, sellingPoints: string[]): Promise<string> {
+  const prompt = `正新鸡排品牌宣传歌曲，节奏明快活泼，30秒左右，传递"美味、欢乐、分享"的品牌氛围，歌词围绕产品"${productName}"核心卖点"${sellingPoints[0] || '酥脆美味'}"展开，适合门店播放`;
 
-要求：
-1. 朋友圈文案1条：轻松亲切，种草风格，包含产品名、价格、核心卖点，带适量emoji，50字以内
-2. 小红书文案1条：种草分享风格，包含标题和正文，突出"${sellingPoints[0] || '美味'}"，带适量emoji，100字以内
-
-直接输出JSON格式：
-{"posts":[{"platform":"朋友圈","content":"..."},{"platform":"小红书","content":"..."}]}`;
-
-  const response = await fetch(`${API_BASE}/v1/text/chatcompletion_pro`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${API_KEY}`,
-    },
-    body: JSON.stringify({
-      model: 'MiniMax-M2.7',
-      messages: [{ role: 'user', content: prompt }],
-      max_tokens: 512,
-    }),
+  const data = await callMiniMax('/music_generation', {
+    model: 'music-2.6',
+    prompt,
   });
-  const data = await response.json();
-  const content = data.choices?.[0]?.message?.content || '';
+  
+  return data.data?.music_url || data.music_url || data.url || '';
+}
+
+// 生成文案（种草+话术）
+async function generateText(productName: string, sellingPoints: string[], price: number): Promise<{ posts: Array<{ platform: string; content: string }> }> {
+  const prompt = `为正新鸡排新品"${productName}"生成以下推广内容，直接输出JSON数组：
+1. 朋友圈文案（轻松亲切，50字内，含emoji）
+2. 小红书种草笔记（种草风格，标题+正文，100字内，含emoji）
+3. 门店推销话术（简短有力，适合店员向顾客推荐）
+
+格式：[{"platform":"朋友圈","content":"..."},{"platform":"小红书","content":"..."},{"platform":"门店话术","content":"..."}]`;
+
+  const response = await callMiniMax('/text/chatcompletion_pro', {
+    model: 'MiniMax-M2.7-highspeed',
+    messages: [{ role: 'user', content: prompt }],
+    max_tokens: 512,
+  });
+  const content = response.choices?.[0]?.message?.content || '';
   
   try {
-    const jsonMatch = content.match(/\{[\s\S]*\}/);
+    const jsonMatch = content.match(/\[[\s\S]*\]/);
     if (jsonMatch) {
       return JSON.parse(jsonMatch[0]);
     }
@@ -134,8 +131,9 @@ async function generateText(productName: string, sellingPoints: string[], price:
   }
   return {
     posts: [
-      { platform: '朋友圈', content: `🔥正新新品「${productName}」上市！${sellingPoints[0]}，仅${price}元！` },
-      { platform: '小红书', content: `被问爆的新品！正新「${productName}」一口沦陷的快乐✨` },
+      { platform: '朋友圈', content: `正新新品「${productName}」🔥酥脆多汁！仅${price}元，赶紧来尝~` },
+      { platform: '小红书', content: `被问爆的新品！正新「${productName}」✨一口沦陷的快乐，冲！` },
+      { platform: '门店话术', content: `老板，新品「${productName}」刚上市，外面卖${price}元，现在扫码有优惠！` },
     ],
   };
 }
@@ -147,7 +145,7 @@ export async function POST(request: Request) {
     }
 
     const body: ContentRequest = await request.json();
-    const { type, productName, sellingPoints, price, targetUser } = body;
+    const { type, productName, sellingPoints, price } = body;
 
     if (!type || !productName) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
@@ -172,8 +170,13 @@ export async function POST(request: Request) {
         result.url = url;
         break;
       }
+      case 'music': {
+        const url = await generateMusic(productName, sellingPoints);
+        result.url = url;
+        break;
+      }
       case 'text': {
-        const posts = await generateText(productName, sellingPoints, price, targetUser);
+        const posts = await generateText(productName, sellingPoints, price);
         result.posts = posts;
         break;
       }
