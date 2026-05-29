@@ -776,7 +776,7 @@ export default function BattleCreatorWizard() {
                 <p>• 产品：<span className="text-text-primary">{formData.name}</span></p>
                 <p>• 卖点：<span className="text-text-primary">{formData.sellingPoints.split('\n')[0] || '酥脆美味'}</span></p>
                 <p>• 价格：<span className="text-text-primary">¥{formData.price}</span></p>
-                <p className="text-xs mt-2 text-text-secondary">美食摄影风格，无文字纯视觉，深橙暖色调背景</p>
+                <p className="text-xs mt-2 text-text-secondary">{itemDescriptions.poster}</p>
               </div>
             </div>
 
@@ -818,7 +818,7 @@ export default function BattleCreatorWizard() {
                 <p>• 产品：<span className="text-text-primary">{formData.name}</span></p>
                 <p>• 时长：<span className="text-text-primary">15秒竖版</span></p>
                 <p>• 卖点：<span className="text-text-primary">{formData.sellingPoints.split('\n')[0] || '酥脆美味'}</span></p>
-                <p className="text-xs mt-2 text-text-secondary">产品特写+门店场景+试吃，食欲感强节奏明快</p>
+                <p className="text-xs mt-2 text-text-secondary">{itemDescriptions.video}</p>
               </div>
             </div>
 
@@ -860,7 +860,7 @@ export default function BattleCreatorWizard() {
                 <p>• 产品：<span className="text-text-primary">{formData.name}</span></p>
                 <p>• 价格：<span className="text-text-primary">¥{formData.price}</span></p>
                 <p>• 卖点：<span className="text-text-primary">{formData.sellingPoints.split('\n')[0] || '酥脆美味'}</span></p>
-                <p className="text-xs mt-2 text-text-secondary">新品叫卖音频，温暖亲切女声，适合门店广播</p>
+                <p className="text-xs mt-2 text-text-secondary">{itemDescriptions.audio}</p>
               </div>
             </div>
 
@@ -902,7 +902,7 @@ export default function BattleCreatorWizard() {
                 <p>• 产品：<span className="text-text-primary">{formData.name}</span></p>
                 <p>• 时长：<span className="text-text-primary">约30秒</span></p>
                 <p>• 卖点：<span className="text-text-primary">{formData.sellingPoints.split('\n')[0] || '酥脆美味'}</span></p>
-                <p className="text-xs mt-2 text-text-secondary">品牌宣传歌曲，节奏明快活泼，传递美味欢乐氛围</p>
+                <p className="text-xs mt-2 text-text-secondary">{itemDescriptions.music}</p>
               </div>
             </div>
 
@@ -943,7 +943,7 @@ export default function BattleCreatorWizard() {
               <div className="text-sm text-text-secondary space-y-1">
                 <p>• 产品：<span className="text-text-primary">{formData.name}</span></p>
                 <p>• 包含：<span className="text-text-primary">朋友圈文案+小红书种草+门店话术</span></p>
-                <p className="text-xs mt-2 text-text-secondary">3种文案风格，含emoji，轻松亲切种草风格</p>
+                <p className="text-xs mt-2 text-text-secondary">{itemDescriptions.text}</p>
               </div>
             </div>
           </div>
