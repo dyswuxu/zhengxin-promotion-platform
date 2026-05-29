@@ -422,6 +422,14 @@ export default function BattleCreatorWizard() {
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatedContent, setGeneratedContent] = useState<any>(null);
   const [isGeneratingContent, setIsGeneratingContent] = useState(false);
+  const [enabledItems, setEnabledItems] = useState<Record<string, boolean>>({
+    poster: true,
+    video: true,
+    audio: true,
+    music: true,
+    text: true,
+  });
+  const [editingItem, setEditingItem] = useState<string | null>(null);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     setFormData(prev => ({
@@ -436,11 +444,11 @@ export default function BattleCreatorWizard() {
     
     const sellingPointsArray = formData.sellingPoints.split('\n').filter((s: string) => s.trim());
     
-    // 逐个请求，结果存入临时对象
+    // 只生成已勾选的内容
     const tempContent: any = {};
     
-    try {
-      // 1. 海报
+    // 1. 海报
+    if (enabledItems.poster) {
       try {
         const r = await fetch('/api/content', {
           method: 'POST',
@@ -449,8 +457,10 @@ export default function BattleCreatorWizard() {
         });
         tempContent.poster = await r.json();
       } catch(e) { tempContent.poster = { error: '海报请求失败' }; }
-      
-      // 2. 视频
+    }
+    
+    // 2. 视频
+    if (enabledItems.video) {
       try {
         const r = await fetch('/api/content', {
           method: 'POST',
@@ -459,8 +469,10 @@ export default function BattleCreatorWizard() {
         });
         tempContent.video = await r.json();
       } catch(e) { tempContent.video = { error: '视频请求失败' }; }
-      
-      // 3. 音频
+    }
+    
+    // 3. 音频
+    if (enabledItems.audio) {
       try {
         const r = await fetch('/api/content', {
           method: 'POST',
@@ -469,8 +481,10 @@ export default function BattleCreatorWizard() {
         });
         tempContent.audio = await r.json();
       } catch(e) { tempContent.audio = { error: '音频请求失败' }; }
-      
-      // 4. 文案
+    }
+    
+    // 4. 文案
+    if (enabledItems.text) {
       try {
         const r = await fetch('/api/content', {
           method: 'POST',
@@ -479,8 +493,10 @@ export default function BattleCreatorWizard() {
         });
         tempContent.text = await r.json();
       } catch(e) { tempContent.text = { error: '文案请求失败', posts: [] }; }
-      
-      // 5. 音乐
+    }
+    
+    // 5. 音乐
+    if (enabledItems.music) {
       try {
         const r = await fetch('/api/content', {
           method: 'POST',
@@ -489,11 +505,9 @@ export default function BattleCreatorWizard() {
         });
         tempContent.music = await r.json();
       } catch(e) { tempContent.music = { error: '音乐请求失败' }; }
-      
-      setGeneratedContent(tempContent);
-    } catch (e) {
-      console.error('内容生成失败:', e);
     }
+    
+    setGeneratedContent(tempContent);
     
     setIsGenerating(false);
     setIsGeneratingContent(false);
@@ -718,12 +732,18 @@ export default function BattleCreatorWizard() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {/* 海报 */}
-            <div className="bg-dark-card rounded-xl border border-dark-border p-5">
+            <div className={`bg-dark-card rounded-xl border p-5 transition-all ${enabledItems.poster ? 'border-battle-orange/50' : 'border-dark-border opacity-60'}`}>
               <div className="flex items-center gap-3 mb-3">
+                <input
+                  type="checkbox"
+                  checked={enabledItems.poster}
+                  onChange={(e) => setEnabledItems(prev => ({ ...prev, poster: e.target.checked }))}
+                  className="w-5 h-5 rounded bg-dark-bg border-dark-border text-battle-orange focus:ring-battle-orange"
+                />
                 <div className="w-10 h-10 bg-battle-orange/20 rounded-lg flex items-center justify-center">
                   <Image size={20} className="text-battle-orange" />
                 </div>
-                <div>
+                <div className="flex-1">
                   <div className="font-medium text-text-primary">海报物料</div>
                   <div className="text-xs text-text-secondary">image-01 模型</div>
                 </div>
@@ -737,14 +757,20 @@ export default function BattleCreatorWizard() {
             </div>
 
             {/* 视频 */}
-            <div className="bg-dark-card rounded-xl border border-dark-border p-5">
+            <div className={`bg-dark-card rounded-xl border p-5 transition-all ${enabledItems.video ? 'border-battle-purple/50' : 'border-dark-border opacity-60'}`}>
               <div className="flex items-center gap-3 mb-3">
+                <input
+                  type="checkbox"
+                  checked={enabledItems.video}
+                  onChange={(e) => setEnabledItems(prev => ({ ...prev, video: e.target.checked }))}
+                  className="w-5 h-5 rounded bg-dark-bg border-dark-border text-battle-purple focus:ring-battle-purple"
+                />
                 <div className="w-10 h-10 bg-battle-purple/20 rounded-lg flex items-center justify-center">
                   <Video size={20} className="text-battle-purple" />
                 </div>
-                <div>
+                <div className="flex-1">
                   <div className="font-medium text-text-primary">视频物料</div>
-                  <div className="text-xs text-text-secondary">Hailuo-2.3-Fast 模型</div>
+                  <div className="text-xs text-text-secondary">video-01 模型</div>
                 </div>
               </div>
               <div className="text-sm text-text-secondary space-y-1">
@@ -756,12 +782,18 @@ export default function BattleCreatorWizard() {
             </div>
 
             {/* 音频 */}
-            <div className="bg-dark-card rounded-xl border border-dark-border p-5">
+            <div className={`bg-dark-card rounded-xl border p-5 transition-all ${enabledItems.audio ? 'border-battle-green/50' : 'border-dark-border opacity-60'}`}>
               <div className="flex items-center gap-3 mb-3">
+                <input
+                  type="checkbox"
+                  checked={enabledItems.audio}
+                  onChange={(e) => setEnabledItems(prev => ({ ...prev, audio: e.target.checked }))}
+                  className="w-5 h-5 rounded bg-dark-bg border-dark-border text-battle-green focus:ring-battle-green"
+                />
                 <div className="w-10 h-10 bg-battle-green/20 rounded-lg flex items-center justify-center">
                   <Music size={20} className="text-battle-green" />
                 </div>
-                <div>
+                <div className="flex-1">
                   <div className="font-medium text-text-primary">音频物料</div>
                   <div className="text-xs text-text-secondary">Speech 2.8 模型</div>
                 </div>
@@ -775,12 +807,18 @@ export default function BattleCreatorWizard() {
             </div>
 
             {/* 音乐 */}
-            <div className="bg-dark-card rounded-xl border border-dark-border p-5">
+            <div className={`bg-dark-card rounded-xl border p-5 transition-all ${enabledItems.music ? 'border-yellow-500/50' : 'border-dark-border opacity-60'}`}>
               <div className="flex items-center gap-3 mb-3">
+                <input
+                  type="checkbox"
+                  checked={enabledItems.music}
+                  onChange={(e) => setEnabledItems(prev => ({ ...prev, music: e.target.checked }))}
+                  className="w-5 h-5 rounded bg-dark-bg border-dark-border text-yellow-500 focus:ring-yellow-500"
+                />
                 <div className="w-10 h-10 bg-yellow-500/20 rounded-lg flex items-center justify-center">
                   <Music size={20} className="text-yellow-500" />
                 </div>
-                <div>
+                <div className="flex-1">
                   <div className="font-medium text-text-primary">音乐物料</div>
                   <div className="text-xs text-text-secondary">Music-2.6 模型</div>
                 </div>
@@ -794,12 +832,18 @@ export default function BattleCreatorWizard() {
             </div>
 
             {/* 文案 */}
-            <div className="bg-dark-card rounded-xl border border-dark-border p-5">
+            <div className={`bg-dark-card rounded-xl border p-5 transition-all ${enabledItems.text ? 'border-battle-blue/50' : 'border-dark-border opacity-60'}`}>
               <div className="flex items-center gap-3 mb-3">
+                <input
+                  type="checkbox"
+                  checked={enabledItems.text}
+                  onChange={(e) => setEnabledItems(prev => ({ ...prev, text: e.target.checked }))}
+                  className="w-5 h-5 rounded bg-dark-bg border-dark-border text-battle-blue focus:ring-battle-blue"
+                />
                 <div className="w-10 h-10 bg-battle-blue/20 rounded-lg flex items-center justify-center">
                   <FileText size={20} className="text-battle-blue" />
                 </div>
-                <div>
+                <div className="flex-1">
                   <div className="font-medium text-text-primary">文案物料</div>
                   <div className="text-xs text-text-secondary">M2.7-highspeed 模型</div>
                 </div>
@@ -810,6 +854,29 @@ export default function BattleCreatorWizard() {
                 <p className="text-xs mt-2 text-text-secondary">3种文案风格，含emoji，轻松亲切种草风格</p>
               </div>
             </div>
+          </div>
+
+          <div className="mt-4 p-4 bg-dark-card rounded-lg border border-dark-border">
+            <div className="flex items-center justify-between">
+              <p className="text-sm text-text-secondary">
+                <span className="text-text-primary font-medium">已选择 {Object.values(enabledItems).filter(Boolean).length} </span>项内容待生成
+              </p>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => setEnabledItems({ poster: true, video: true, audio: true, music: true, text: true })}
+                  className="text-xs px-3 py-1 bg-accent/20 text-accent rounded-lg hover:bg-accent/30 transition-colors"
+                >
+                  全选
+                </button>
+                <button
+                  onClick={() => setEnabledItems({ poster: false, video: false, audio: false, music: false, text: false })}
+                  className="text-xs px-3 py-1 bg-dark-bg text-text-secondary rounded-lg hover:bg-dark-border transition-colors"
+                >
+                  取消全选
+                </button>
+              </div>
+            </div>
+            <p className="text-xs text-text-secondary mt-2">取消勾选的内容将跳过生成，确认后再生成</p>
           </div>
 
           <div className="flex justify-between mt-8 pt-6 border-t border-dark-border">

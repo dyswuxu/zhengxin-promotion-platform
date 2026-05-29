@@ -48,7 +48,7 @@ async function generateVideo(productName: string, sellingPoints: string[]): Prom
   const prompt = `15秒正新鸡排新品种草视频，画面节奏明快食欲感强，包含产品特写、门店场景、消费者试吃等镜头，核心卖点：${sellingPoints[0] || '酥脆美味'}`;
   
   const data = await callMiniMax('/video_generation', {
-    model: 'MiniMax-Hailuo-2.3-Fast',
+    model: 'video-01',
     prompt,
   });
   
@@ -74,11 +74,11 @@ async function generateAudio(productName: string, sellingPoints: string[], price
   const text = `好消息！正新鸡排隆重推出新品——${productName}！${sellingPoints[0] || '表皮酥脆 内里鲜嫩'}，一口下去超满足！新品尝鲜价，只要${price}元！全国门店同步上市，欢迎品尝！`;
   
   const response = await callMiniMax('/t2a_v2', {
-    model: 'speech-2.8',
+    model: 'speech-2.8-hd',
     text,
     stream: false,
     voice_setting: {
-      voice_id: 'Chinese (Mandarin)_Warm_and_Friendly_Nancy',
+      voice_id: 'Chinese (Mandarin)_Warm_Girl',
     },
     audio_setting: {
       format: 'mp3',
@@ -94,15 +94,20 @@ async function generateAudio(productName: string, sellingPoints: string[], price
 }
 
 // 生成音乐（宣传歌曲）
-async function generateMusic(productName: string, sellingPoints: string[]): Promise<string> {
+async function generateMusic(productName: string, sellingPoints: string[], price: number): Promise<string> {
   const prompt = `正新鸡排品牌宣传歌曲，节奏明快活泼，30秒左右，传递"美味、欢乐、分享"的品牌氛围，歌词围绕产品"${productName}"核心卖点"${sellingPoints[0] || '酥脆美味'}"展开，适合门店播放`;
 
   const data = await callMiniMax('/music_generation', {
     model: 'music-2.6',
     prompt,
+    lyrics: `正新鸡排${productName}，美味难挡！${sellingPoints[0] || '酥脆多汁'}，一口沦陷！新品尝鲜价${price}元，全国门店同步发售！`,
   });
   
-  return data.data?.music_url || data.music_url || data.url || '';
+  const audioData = data.data?.audio || '';
+  if (audioData) {
+    return `data:audio/mp3;base64,${audioData}`;
+  }
+  return '';
 }
 
 // 生成文案（种草+话术）
@@ -124,7 +129,10 @@ async function generateText(productName: string, sellingPoints: string[], price:
   try {
     const jsonMatch = content.match(/\[[\s\S]*\]/);
     if (jsonMatch) {
-      return JSON.parse(jsonMatch[0]);
+      const parsed = JSON.parse(jsonMatch[0]);
+      // Handle both array and {posts: array} formats
+      const postsArray = Array.isArray(parsed) ? parsed : parsed.posts || [];
+      return { posts: postsArray };
     }
   } catch {
     // fallback
@@ -171,7 +179,7 @@ export async function POST(request: Request) {
         break;
       }
       case 'music': {
-        const url = await generateMusic(productName, sellingPoints);
+        const url = await generateMusic(productName, sellingPoints, price);
         result.url = url;
         break;
       }
