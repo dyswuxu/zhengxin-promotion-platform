@@ -12,8 +12,10 @@ interface ContentRequest {
 
 const API_KEY = process.env.MINIMAX_API_KEY;
 
+const API_BASE = 'https://api.minimaxi.com';
+
 async function callMiniMax(endpoint: string, body: any): Promise<any> {
-  const response = await fetch(`https://api.minimax.io/v1${endpoint}`, {
+  const response = await fetch(`${API_BASE}/v1${endpoint}`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -39,7 +41,7 @@ async function generatePoster(productName: string, sellingPoints: string[], pric
     num_images: 1,
   });
   
-  return data.images?.[0]?.url || data.url || '';
+  return data.data?.image_urls?.[0] || data.images?.[0]?.url || data.url || '';
 }
 
 // 生成种草视频
@@ -56,7 +58,7 @@ async function generateVideo(productName: string, sellingPoints: string[]): Prom
 
 // 查询视频状态
 async function getVideoStatus(taskId: string): Promise<{ status: string; url?: string }> {
-  const response = await fetch(`https://api.minimax.io/v1/query/video_generation?task_id=${taskId}`, {
+  const response = await fetch(`${API_BASE}/v1/query/video_generation?task_id=${taskId}`, {
     headers: {
       'Authorization': `Bearer ${API_KEY}`,
     },
@@ -72,12 +74,13 @@ async function getVideoStatus(taskId: string): Promise<{ status: string; url?: s
 async function generateAudio(productName: string, sellingPoints: string[], price: number): Promise<string> {
   const text = `欢迎光临正新鸡排！本店新品「${productName}」震撼上市！${sellingPoints[0] || '酥脆多汁'}，一口沦陷！新品尝鲜价仅需${price}元，限时优惠，欢迎品尝！`;
   
-  const data = await callMiniMax('/t2a_v2', {
-    model: 'speech-02',
+  // 使用 speech-2.8-hd 模型，音频直接返回（不返回taskId）
+  const response = await callMiniMax('/t2a_v2', {
+    model: 'speech-2.8-hd',
     text,
     stream: false,
     voice_setting: {
-      voice_id: 'Chinese_Yunvocal_4',
+      voice_id: 'Chinese (Mandarin)_Kind-hearted_Antie',
     },
     audio_setting: {
       format: 'mp3',
@@ -85,7 +88,14 @@ async function generateAudio(productName: string, sellingPoints: string[], price
     },
   });
   
-  return data.data?.url || data.audio_url || data.url || '';
+  // 如果返回的是 base64 音频数据，格式: data.audio
+  const audioData = response.data?.audio || response.audio_url || '';
+  if (audioData) {
+    // 将 base64 音频转为可访问的 URL
+    // 由于 Next.js API route 不能直接返回二进制，我们返回 data URL
+    return `data:audio/mp3;base64,${audioData}`;
+  }
+  return '';
 }
 
 // 生成文案
@@ -99,7 +109,7 @@ async function generateText(productName: string, sellingPoints: string[], price:
 直接输出JSON格式：
 {"posts":[{"platform":"朋友圈","content":"..."},{"platform":"小红书","content":"..."}]}`;
 
-  const response = await fetch('https://api.minimax.io/v1/text/chatcompletion_pro', {
+  const response = await fetch(`${API_BASE}/v1/text/chatcompletion_pro`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
