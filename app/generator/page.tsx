@@ -462,7 +462,6 @@ export default function BattleCreatorWizard() {
     // 只生成已勾选的内容
     const tempContent: any = {};
     
-    try {
     // 1. 海报
     if (enabledItems.poster) {
       try {
@@ -526,9 +525,6 @@ export default function BattleCreatorWizard() {
         const data = await r.json();
         tempContent.music = data;
       } catch(e) { tempContent.music = { error: '音乐请求失败' }; }
-    }
-    } catch (e) {
-      console.error('内容生成失败:', e);
     }
     
     setGeneratedContent(tempContent);
