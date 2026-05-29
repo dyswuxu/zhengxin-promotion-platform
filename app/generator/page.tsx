@@ -448,14 +448,21 @@ export default function BattleCreatorWizard() {
   };
 
   const handleGenerate = async () => {
+    if (Object.values(enabledItems).every(v => !v)) {
+      alert('请至少选择一种内容类型生成');
+      return;
+    }
+    
     setIsGenerating(true);
     setIsGeneratingContent(true);
+    setGeneratedContent(null);
     
     const sellingPointsArray = formData.sellingPoints.split('\n').filter((s: string) => s.trim());
     
     // 只生成已勾选的内容
     const tempContent: any = {};
     
+    try {
     // 1. 海报
     if (enabledItems.poster) {
       try {
@@ -464,7 +471,8 @@ export default function BattleCreatorWizard() {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ type: 'poster', productName: formData.name, sellingPoints: sellingPointsArray, price: formData.price, description: itemDescriptions.poster }),
         });
-        tempContent.poster = await r.json();
+        const data = await r.json();
+        tempContent.poster = data;
       } catch(e) { tempContent.poster = { error: '海报请求失败' }; }
     }
     
@@ -476,7 +484,8 @@ export default function BattleCreatorWizard() {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ type: 'video', productName: formData.name, sellingPoints: sellingPointsArray, price: formData.price, description: itemDescriptions.video }),
         });
-        tempContent.video = await r.json();
+        const data = await r.json();
+        tempContent.video = data;
       } catch(e) { tempContent.video = { error: '视频请求失败' }; }
     }
     
@@ -488,7 +497,8 @@ export default function BattleCreatorWizard() {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ type: 'audio', productName: formData.name, sellingPoints: sellingPointsArray, price: formData.price, description: itemDescriptions.audio }),
         });
-        tempContent.audio = await r.json();
+        const data = await r.json();
+        tempContent.audio = data;
       } catch(e) { tempContent.audio = { error: '音频请求失败' }; }
     }
     
@@ -500,7 +510,8 @@ export default function BattleCreatorWizard() {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ type: 'text', productName: formData.name, sellingPoints: sellingPointsArray, price: formData.price, description: itemDescriptions.text }),
         });
-        tempContent.text = await r.json();
+        const data = await r.json();
+        tempContent.text = data;
       } catch(e) { tempContent.text = { error: '文案请求失败', posts: [] }; }
     }
     
@@ -512,8 +523,12 @@ export default function BattleCreatorWizard() {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ type: 'music', productName: formData.name, sellingPoints: sellingPointsArray, price: formData.price, description: itemDescriptions.music }),
         });
-        tempContent.music = await r.json();
+        const data = await r.json();
+        tempContent.music = data;
       } catch(e) { tempContent.music = { error: '音乐请求失败' }; }
+    }
+    } catch (e) {
+      console.error('内容生成失败:', e);
     }
     
     setGeneratedContent(tempContent);
