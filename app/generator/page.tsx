@@ -460,7 +460,7 @@ export default function BattleCreatorWizard() {
         const r = await fetch('/api/content', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ type: 'poster', productName: formData.name, sellingPoints: sellingPointsArray, price: formData.price }),
+          body: JSON.stringify({ type: 'poster', productName: formData.name, sellingPoints: sellingPointsArray, price: formData.price, description: itemDescriptions.poster }),
         });
         tempContent.poster = await r.json();
       } catch(e) { tempContent.poster = { error: '海报请求失败' }; }
@@ -472,7 +472,7 @@ export default function BattleCreatorWizard() {
         const r = await fetch('/api/content', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ type: 'video', productName: formData.name, sellingPoints: sellingPointsArray, price: formData.price }),
+          body: JSON.stringify({ type: 'video', productName: formData.name, sellingPoints: sellingPointsArray, price: formData.price, description: itemDescriptions.video }),
         });
         tempContent.video = await r.json();
       } catch(e) { tempContent.video = { error: '视频请求失败' }; }
@@ -484,7 +484,7 @@ export default function BattleCreatorWizard() {
         const r = await fetch('/api/content', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ type: 'audio', productName: formData.name, sellingPoints: sellingPointsArray, price: formData.price }),
+          body: JSON.stringify({ type: 'audio', productName: formData.name, sellingPoints: sellingPointsArray, price: formData.price, description: itemDescriptions.audio }),
         });
         tempContent.audio = await r.json();
       } catch(e) { tempContent.audio = { error: '音频请求失败' }; }
@@ -496,7 +496,7 @@ export default function BattleCreatorWizard() {
         const r = await fetch('/api/content', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ type: 'text', productName: formData.name, sellingPoints: sellingPointsArray, price: formData.price }),
+          body: JSON.stringify({ type: 'text', productName: formData.name, sellingPoints: sellingPointsArray, price: formData.price, description: itemDescriptions.text }),
         });
         tempContent.text = await r.json();
       } catch(e) { tempContent.text = { error: '文案请求失败', posts: [] }; }
@@ -508,7 +508,7 @@ export default function BattleCreatorWizard() {
         const r = await fetch('/api/content', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ type: 'music', productName: formData.name, sellingPoints: sellingPointsArray, price: formData.price }),
+          body: JSON.stringify({ type: 'music', productName: formData.name, sellingPoints: sellingPointsArray, price: formData.price, description: itemDescriptions.music }),
         });
         tempContent.music = await r.json();
       } catch(e) { tempContent.music = { error: '音乐请求失败' }; }
