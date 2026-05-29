@@ -266,10 +266,12 @@ function ContentVisualizer({ type, content, onVideoStatusCheck }: { type: string
     }
     
     if (type === 'text') {
-      const posts = Array.isArray(content.posts) ? content.posts : (typeof content.posts === 'string' ? [{ platform: '文案', content: content.posts }] : []);
+      // Handle nested {posts: [...]} format from API
+      const rawPosts = content.posts;
+      const postsArray = rawPosts?.posts ? rawPosts.posts : (Array.isArray(rawPosts) ? rawPosts : []);
       return (
         <div className="space-y-3">
-          {posts.length > 0 ? posts.map((post: any, i: number) => (
+          {postsArray.length > 0 ? postsArray.map((post: any, i: number) => (
             <div key={i} className="bg-dark-bg rounded-lg p-4 border border-dark-border">
               <div className="flex items-center gap-2 mb-2">
                 <span className="text-xs font-medium px-2 py-0.5 bg-battle-blue/20 text-battle-blue rounded">
