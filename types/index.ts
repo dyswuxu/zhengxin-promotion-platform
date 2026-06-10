@@ -123,6 +123,94 @@ export interface AnalyticsData {
   salesTrend: Array<{ date: string; value: number }>;
 }
 
+// Trial Sale types
+export type TrialStatus = 'planning' | 'preparing' | 'executing' | 'reviewing' | 'completed' | 'cancelled';
+
+export const TrialStatusLabel: Record<TrialStatus, string> = {
+  planning: '计划中',
+  preparing: '准备中',
+  executing: '试卖中',
+  reviewing: '复盘决策',
+  completed: '已完成',
+  cancelled: '已终止',
+};
+
+export const TrialStatusColor: Record<TrialStatus, string> = {
+  planning: 'bg-gray-100 text-gray-600',
+  preparing: 'bg-blue-100 text-blue-600',
+  executing: 'bg-accent-light/20 text-accent',
+  reviewing: 'bg-purple-100 text-purple-600',
+  completed: 'bg-success/20 text-success',
+  cancelled: 'bg-gray-100 text-muted',
+};
+
+export type TrialDecision = 'approve' | 'modify_then_approve' | 'extend_trial' | 'postpone';
+
+export const TrialDecisionLabel: Record<TrialDecision, string> = {
+  approve: '可以放大',
+  modify_then_approve: '小改后放大',
+  extend_trial: '继续试卖',
+  postpone: '暂缓推广',
+};
+
+export type StoreType = 'school' | 'business' | 'community' | 'delivery' | 'night_market';
+
+export const StoreTypeLabel: Record<StoreType, string> = {
+  school: '学校门店',
+  business: '商圈门店',
+  community: '社区门店',
+  delivery: '外卖强店',
+  night_market: '夜宵门店',
+};
+
+export interface TrialPlan {
+  id: string;
+  productId: string;
+  productName?: string;
+  startDate: string;
+  endDate: string;
+  status: TrialStatus;
+  storeIds: string[];
+  storeTypes: StoreType[];
+  conclusion: TrialConclusion | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface TrialConclusion {
+  decision: TrialDecision;
+  mainCrowd: string;
+  mainScene: string;
+  bestCombo: string;
+  standardScript: string;
+  adjustmentIssues: string;
+  productViability: string;
+  storeViability: string;
+  replicability: string;
+  generatedAt: string;
+}
+
+export interface TrialDailyReport {
+  id: string;
+  trialId: string;
+  storeId: string;
+  storeName: string;
+  day: number;
+  reportDate: string;
+  newProductSales: number;
+  newProductRatio: number;
+  comboRate: number;
+  avgOrderValueChange: number;
+  customerFeedback: {
+    whyBuy: string;
+    whyNotBuy: string;
+    bestScene: string;
+  };
+  operationIssues: string[];
+  staffFeedback: string;
+  createdAt: string;
+}
+
 // Form types
 export interface ProductFormData {
   name: string;
@@ -133,4 +221,10 @@ export interface ProductFormData {
   sellingPoints: string;
   launchDate: string;
   region: string;
+}
+
+export interface TrialPlanFormData {
+  productId: string;
+  startDate: string;
+  storeIds: string[];
 }

@@ -11,11 +11,13 @@ import {
   RefreshCw,
   Settings,
   Target,
+  FlaskConical,
 } from 'lucide-react';
 
 const navItems = [
   { href: '/', label: '战役指挥台', icon: LayoutDashboard },
   { href: '/products', label: '新品中心', icon: Package },
+  { href: '/trial', label: '试卖中心', icon: FlaskConical },
   { href: '/generator', label: 'AI战略生成器', icon: Sparkles },
   { href: '/tasks', label: '作战任务', icon: Target },
   { href: '/analytics', label: '战况数据中心', icon: BarChart3 },

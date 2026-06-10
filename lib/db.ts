@@ -122,6 +122,44 @@ function initializeSchema() {
       FOREIGN KEY (product_id) REFERENCES products(id)
     )
   `);
+
+  // Trial plans table
+  database.exec(`
+    CREATE TABLE IF NOT EXISTS trial_plans (
+      id TEXT PRIMARY KEY,
+      product_id TEXT NOT NULL,
+      start_date TEXT NOT NULL,
+      end_date TEXT NOT NULL,
+      status TEXT DEFAULT 'planning',
+      store_ids TEXT DEFAULT '[]',
+      store_types TEXT DEFAULT '[]',
+      conclusion TEXT,
+      created_at TEXT DEFAULT (datetime('now')),
+      updated_at TEXT DEFAULT (datetime('now')),
+      FOREIGN KEY (product_id) REFERENCES products(id)
+    )
+  `);
+
+  // Trial daily reports table
+  database.exec(`
+    CREATE TABLE IF NOT EXISTS trial_daily_reports (
+      id TEXT PRIMARY KEY,
+      trial_id TEXT NOT NULL,
+      store_id TEXT NOT NULL,
+      store_name TEXT,
+      day INTEGER NOT NULL,
+      report_date TEXT NOT NULL,
+      new_product_sales INTEGER DEFAULT 0,
+      new_product_ratio REAL DEFAULT 0,
+      combo_rate REAL DEFAULT 0,
+      avg_order_value_change REAL DEFAULT 0,
+      customer_feedback TEXT,
+      operation_issues TEXT DEFAULT '[]',
+      staff_feedback TEXT,
+      created_at TEXT DEFAULT (datetime('now')),
+      FOREIGN KEY (trial_id) REFERENCES trial_plans(id)
+    )
+  `);
 }
 
 // Product operations
@@ -335,4 +373,126 @@ export function getAnalytics(productId?: string) {
     ORDER BY a.date DESC
   `);
   return stmt.all();
+}
+
+// Trial plan operations
+export function createTrialPlan(trial: {
+  id: string;
+  productId: string;
+  startDate: string;
+  endDate: string;
+  storeIds: string[];
+  storeTypes: string[];
+}) {
+  const db = getDb();
+  const stmt = db.prepare(`
+    INSERT INTO trial_plans (id, product_id, start_date, end_date, status, store_ids, store_types)
+    VALUES (?, ?, ?, ?, 'planning', ?, ?)
+  `);
+  return stmt.run(
+    trial.id,
+    trial.productId,
+    trial.startDate,
+    trial.endDate,
+    JSON.stringify(trial.storeIds),
+    JSON.stringify(trial.storeTypes)
+  );
+}
+
+export function getTrialPlans(status?: string) {
+  const db = getDb();
+  let stmt;
+  if (status) {
+    stmt = db.prepare('SELECT tp.*, p.name as product_name FROM trial_plans tp LEFT JOIN products p ON tp.product_id = p.id WHERE tp.status = ? ORDER BY tp.created_at DESC');
+    return stmt.all(status);
+  }
+  stmt = db.prepare('SELECT tp.*, p.name as product_name FROM trial_plans tp LEFT JOIN products p ON tp.product_id = p.id ORDER BY tp.created_at DESC');
+  return stmt.all();
+}
+
+export function getTrialPlanById(id: string) {
+  const db = getDb();
+  const stmt = db.prepare('SELECT tp.*, p.name as product_name, p.category, p.price, p.cost FROM trial_plans tp LEFT JOIN products p ON tp.product_id = p.id WHERE tp.id = ?');
+  return stmt.get(id);
+}
+
+export function updateTrialPlan(id: string, updates: Record<string, unknown>) {
+  const db = getDb();
+  const fields = Object.keys(updates).map(k => `${k} = ?`).join(', ');
+  const values = Object.values(updates);
+  const stmt = db.prepare(`UPDATE trial_plans SET ${fields}, updated_at = datetime('now') WHERE id = ?`);
+  return stmt.run(...values, id);
+}
+
+export function updateTrialConclusion(id: string, conclusion: Record<string, unknown>) {
+  const db = getDb();
+  const stmt = db.prepare('UPDATE trial_plans SET conclusion = ?, updated_at = datetime(\'now\') WHERE id = ?');
+  return stmt.run(JSON.stringify(conclusion), id);
+}
+
+// Trial daily report operations
+export function createTrialDailyReport(report: {
+  id: string;
+  trialId: string;
+  storeId: string;
+  storeName: string;
+  day: number;
+  reportDate: string;
+  newProductSales: number;
+  newProductRatio: number;
+  comboRate: number;
+  avgOrderValueChange: number;
+  customerFeedback: { whyBuy: string; whyNotBuy: string; bestScene: string };
+  operationIssues: string[];
+  staffFeedback: string;
+}) {
+  const db = getDb();
+  const stmt = db.prepare(`
+    INSERT INTO trial_daily_reports (id, trial_id, store_id, store_name, day, report_date, new_product_sales, new_product_ratio, combo_rate, avg_order_value_change, customer_feedback, operation_issues, staff_feedback)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+  `);
+  return stmt.run(
+    report.id,
+    report.trialId,
+    report.storeId,
+    report.storeName,
+    report.day,
+    report.reportDate,
+    report.newProductSales,
+    report.newProductRatio,
+    report.comboRate,
+    report.avgOrderValueChange,
+    JSON.stringify(report.customerFeedback),
+    JSON.stringify(report.operationIssues),
+    report.staffFeedback
+  );
+}
+
+export function getTrialDailyReports(trialId: string) {
+  const db = getDb();
+  const stmt = db.prepare('SELECT * FROM trial_daily_reports WHERE trial_id = ? ORDER BY day ASC, store_id ASC');
+  return stmt.all(trialId);
+}
+
+export function getTrialDailyReportsByStore(trialId: string, storeId: string) {
+  const db = getDb();
+  const stmt = db.prepare('SELECT * FROM trial_daily_reports WHERE trial_id = ? AND store_id = ? ORDER BY day ASC');
+  return stmt.all(trialId, storeId);
+}
+
+export function getTrialAggregatedData(trialId: string) {
+  const db = getDb();
+  const stmt = db.prepare(`
+    SELECT 
+      day,
+      AVG(new_product_sales) as avg_sales,
+      AVG(new_product_ratio) as avg_ratio,
+      AVG(combo_rate) as avg_combo_rate,
+      SUM(new_product_sales) as total_sales
+    FROM trial_daily_reports
+    WHERE trial_id = ?
+    GROUP BY day
+    ORDER BY day ASC
+  `);
+  return stmt.all(trialId);
 }
